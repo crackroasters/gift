@@ -1,0 +1,112 @@
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Hamlet';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
+body {
+	font-family: "Hamlet", sans-serif;
+	padding: 24px;
+}
+
+.wrap {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.title {
+	margin: 0 0 16px;
+
+	font-size: 28px;
+}
+
+.copyright {
+    position: fixed;
+    transform: translateX(-50%);
+    bottom: 20px;
+    left: 50%;
+}
+
+.btn {
+	border: 1px solid #222;
+	border-radius: 6px;
+    padding: 12px 18px;
+	background-color: #fff;
+    font-size: 8px; 
+	transition: transform 0.15s ease;
+}
+
+.btn.animate {
+	transform: scale(0.95);
+}
+
+.result {
+    opacity: 0;
+
+    transform: translateY(6px) scale(0.98);
+
+    margin-top: 18px;
+
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.4;
+	word-break: keep-all;
+
+	transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.result.show {
+	opacity: 1;
+
+	transform: translateY(0) scale(1);
+}
