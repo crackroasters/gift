@@ -171,8 +171,8 @@ body {
     align-items: center;
     min-height: 100vh;
 	padding: 24px;
-    background: radial-gradient(rgb(181, 240, 194) 30%, #fff 30%);
-    background-size: 100% 100%;
+    background: radial-gradient(circle 44vw, rgb(255, 255, 223) 10%, #b1ffaf 50%, #fff);
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     line-height: 1;
@@ -195,9 +195,11 @@ body {
 }
 
 .title p {
+    display: block;
+
     margin-bottom: 10px;
-    
-    font-size: 6vw;
+
+    font-size: 10vw;
 }
 
 .logo {
