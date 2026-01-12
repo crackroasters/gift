@@ -136,6 +136,7 @@ time, mark, audio, video {
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    box-sizing: border-box;
 }
 
 article, aside, details, figcaption, figure, 
@@ -233,7 +234,7 @@ body {
 
     transform: translateY(6px) scale(0.98);
 
-	font-size: 2vw;
+	font-size: 3vw;
 	line-height: 1.4;
 	word-break: keep-all;
 
@@ -244,7 +245,9 @@ body {
     content: "🔮 🍀";
 
     display: block;
-    font-size: 2vw;
+    margin-bottom: 16px;
+
+    font-size: 4vw;
 }
 
 .result.show {
