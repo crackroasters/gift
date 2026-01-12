@@ -215,6 +215,7 @@ body {
 
 .btn {
     margin-top: 14px;
+    margin-bottom: 50px;
 	border: 1px solid #222;
 	border-radius: 6px;
     padding: 12px 18px;
@@ -232,13 +233,18 @@ body {
 
     transform: translateY(6px) scale(0.98);
 
-    margin-top: 50px;
-
 	font-size: 2vw;
 	line-height: 1.4;
 	word-break: keep-all;
 
 	transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.result::before {
+    content: "🔮 🍀";
+
+    display: block;
+    font-size: 2vw;
 }
 
 .result.show {
