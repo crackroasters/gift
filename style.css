@@ -166,9 +166,16 @@ button {
 }
 
 body {
-	font-family: "Hamlet", sans-serif;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
 	padding: 24px;
-    background: radial-gradient(white 10%, rgb(57, 219, 92) 50%);
+    background: radial-gradient(rgb(181, 240, 194) 10%, #fff 30%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    font-family: "Hamlet", sans-serif;
 }
 
 .wrap {
