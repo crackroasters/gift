@@ -183,6 +183,18 @@ body {
 	font-size: 28px;
 }
 
+.logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.logo-img {
+    width: 60px;
+    height: 60px;
+    aspect-ratio: 1/1;
+}
+
 .copyright {
     position: fixed;
     transform: translateX(-50%);
@@ -194,11 +206,12 @@ body {
 }
 
 .btn {
+    margin-top: 14px;
 	border: 1px solid #222;
 	border-radius: 6px;
     padding: 12px 18px;
 	background-color: #fff;
-    font-size: 8px; 
+    font-size: 14px; 
 	transition: transform 0.15s ease;
 }
 
@@ -214,7 +227,6 @@ body {
     margin-top: 18px;
 
 	font-size: 22px;
-	font-weight: 700;
 	line-height: 1.4;
 	word-break: keep-all;
 
