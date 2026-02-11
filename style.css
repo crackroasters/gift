@@ -172,7 +172,7 @@ body {
     align-items: center;
     min-height: 100vh;
 	padding: 24px;
-    background: radial-gradient(circle 44vw, rgb(255, 255, 223) 10%, #b1ffaf 50%, #fff);
+    /* background: radial-gradient(circle 44vw, rgb(255, 255, 223) 10%, #b1ffaf 50%, #fff); */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -193,6 +193,8 @@ body {
 	margin: 0 0 16px;
 
 	font-size: 3vw;
+    font-family: "Poppins";
+    font-weight: 400;
 }
 
 .title p {
@@ -227,8 +229,7 @@ body {
 }
 
 .btn {
-    margin-top: 14px;
-    margin-bottom: 50px;
+    margin-top: 14px auto 50px auto;
 	border: 1px solid #222;
 	border-radius: 6px;
     padding: 12px 18px;
