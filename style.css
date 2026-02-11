@@ -192,7 +192,7 @@ body {
 .title {
 	margin: 0 0 16px;
 
-	font-size: 3vw;
+	font-size: 18px;
     font-family: "Poppins";
     font-weight: 400;
 }
@@ -247,20 +247,11 @@ body {
 
     transform: translateY(6px) scale(0.98);
 
-	font-size: 4vw;
+	font-size: 12px;
 	line-height: 1.4;
 	word-break: keep-all;
 
 	transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.result::before {
-    content: "🔮 🍀";
-
-    display: block;
-    margin-bottom: 16px;
-
-    font-size: 6vw;
 }
 
 .result.show {
