@@ -145,4 +145,59 @@ function initFortune() {
 	})
 }
 
+function initCam() {
+	const video = document.getElementById("cam")
+	const toggleBtn = document.getElementById("camToggleBtn")
+	const status = document.getElementById("camStatus")
+
+	if (!video || !toggleBtn || !status) return
+
+	let stream = null
+
+	const setStatus = (msg) => status.textContent = msg
+
+	const stopStream = () => {
+		if (!stream) return
+		stream.getTracks().forEach((t) => t.stop())
+		stream = null
+		video.srcObject = null
+		toggleBtn.textContent = "카메라 켜기"
+		setStatus("카메라 꺼짐")
+	}
+
+	const startStream = async () => {
+		if (!navigator.mediaDevices?.getUserMedia) {
+			setStatus("이 브라우저는 카메라를 지원하지 않음")
+			return
+		}
+
+		try {
+			stream = await navigator.mediaDevices.getUserMedia({
+				video: { facingMode: "user" },
+				audio: false
+			})
+
+			video.srcObject = stream
+			await video.play()
+
+			toggleBtn.textContent = "카메라 끄기"
+			setStatus("카메라 켜짐")
+		} catch (err) {
+			stopStream()
+			setStatus("권한이 필요함 (Safari 설정 확인)")
+		}
+	}
+
+	toggleBtn.addEventListener("click", () => stream ? stopStream() : startStream())
+
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) stopStream()
+	})
+
+	window.addEventListener("pagehide", stopStream)
+	setStatus("카메라 꺼짐")
+}
+
+
 initFortune()
+initCam()
