@@ -268,14 +268,26 @@ body {
 	transform: translateY(0) scale(1);
 }
 
-.wrap:has(.result.show) :is(.btn, .title) {
+.wrap :is(.btn--ghost, .title) {
     display: none
+}
+
+.wrap:has(.result.show) :is(.btn--fortune, .title) {
+    display: none
+}
+
+.wrap:has(.result.show) :is(.btn--ghost, .title) {
+    display: block
 }
 
 
 .camera {
-	position: relative;
-	width: min(520px, 92vw);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: min(320px, 92vw);
 	aspect-ratio: 4 / 3;
 	margin: 16px auto 18px;
 	border-radius: 18px;
@@ -284,9 +296,11 @@ body {
 	box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
-.cam-ui {
-    padding: 6px 14px;
+.cam-url {
+    padding: 8px 14px;
     background-color: #fafafa;
+    font-size: 1.5vw;
+    font-family: "Poppins";
     color: #111;
     text-align: center;
 }
