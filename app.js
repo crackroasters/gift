@@ -1,11 +1,3 @@
-function getTodayKey() {
-	const now = new Date()
-	const year = String(now.getFullYear())
-	const month = String(now.getMonth() + 1).padStart(2, "0")
-	const day = String(now.getDate()).padStart(2, "0")
-	return `${year}-${month}-${day}`
-}
-
 function pickRandom(arr) {
 	const idx = Math.floor(Math.random() * arr.length)
 	return arr[idx]
@@ -23,37 +15,16 @@ function playAnim(btn, result) {
 	})
 }
 
-function loadSavedFortune() {
-	try {
-		const raw = localStorage.getItem("fortune_daily")
-		return raw ? JSON.parse(raw) : null
-	} catch {
-		return null
-	}
-}
-
-function saveFortune(data) {
-	try {
-		localStorage.setItem("fortune_daily", JSON.stringify(data))
-	} catch {
-	}
-}
-
-function getDailyFortune(fortunes) {
-	const todayKey = getTodayKey()
-	const saved = loadSavedFortune()
-
-	if (saved && saved.date === todayKey && typeof saved.text === "string")
-		return saved.text
-
-	const text = pickRandom(fortunes)
-	saveFortune({ date: todayKey, text })
-	return text
+function getRandomFortune(fortunes) {
+	return pickRandom(fortunes)
 }
 
 function initFortune() {
 	const btn = document.getElementById("fortuneBtn")
+	const retryBtn = document.getElementById("fortuneRetryBtn")
 	const result = document.getElementById("result")
+
+	if (!btn || !retryBtn || !result) return
 
 	const fortunes = [
 		"이번주 복권 당첨은 바로 나?!",
@@ -116,7 +87,7 @@ function initFortune() {
 		"오늘은 마음이 먼저 여유롭다!",
 		"오늘은 나를 의심하지 말자",
 		"오늘은 이미 충분히 잘했다!",
-        "그냥 웃자!",
+		"그냥 웃자!",
 		"오늘은 어제보다 나은 나!",
 		"행복은 멀리 있지 않다.... 바로 앞에 있다...",
 		"스스로를 믿는 사람은 이미 반쯤 이긴다",
@@ -135,14 +106,17 @@ function initFortune() {
 		"오늘을 버텼다면 이미 잘한 것이다"
 	]
 
-	btn.addEventListener("click", () => {
+	const runFortune = () => {
 		resetAnim(btn, result)
 
-		const fortune = getDailyFortune(fortunes)
+		const fortune = getRandomFortune(fortunes)
 		result.textContent = fortune
 
 		playAnim(btn, result)
-	})
+	}
+
+	btn.addEventListener("click", runFortune)
+	retryBtn.addEventListener("click", runFortune)
 }
 
 function initCam() {
@@ -182,7 +156,7 @@ function initCam() {
 
 			toggleBtn.textContent = "카메라 끄기"
 			setStatus("카메라 켜짐")
-		} catch (err) {
+		} catch {
 			stopStream()
 			setStatus("권한이 필요함 (Safari 설정 확인)")
 		}
@@ -214,7 +188,19 @@ function initLockdown() {
 	document.addEventListener("gestureend", block, { passive: false })
 }
 
+function initAutoScroll() {
+	const scrollDown = () => {
+		window.scrollTo({ top: 2, left: 0, behavior: "instant" })
+	}
+
+	requestAnimationFrame(() => {
+		scrollDown()
+		setTimeout(scrollDown, 60)
+		setTimeout(scrollDown, 220)
+	})
+}
 
 initFortune()
 initCam()
 initLockdown()
+initAutoScroll()
