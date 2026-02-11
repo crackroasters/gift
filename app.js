@@ -198,6 +198,23 @@ function initCam() {
 	setStatus("카메라 꺼짐")
 }
 
+function initLockdown() {
+	document.body.classList.add("lockdown")
+
+	const block = (e) => e.preventDefault()
+
+	document.addEventListener("contextmenu", block, { passive: false })
+	document.addEventListener("selectstart", block, { passive: false })
+	document.addEventListener("dragstart", block, { passive: false })
+
+	document.addEventListener("touchmove", block, { passive: false })
+
+	document.addEventListener("gesturestart", block, { passive: false })
+	document.addEventListener("gesturechange", block, { passive: false })
+	document.addEventListener("gestureend", block, { passive: false })
+}
+
 
 initFortune()
 initCam()
+initLockdown()

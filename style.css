@@ -311,3 +311,21 @@ body {
 	font-size: 13px;
 	opacity: .85;
 }
+
+body.lockdown * {
+	pointer-events: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+body.lockdown #camToggleBtn,
+body.lockdown #fortuneBtn,
+body.lockdown #fortuneRetryBtn {
+	pointer-events: auto;
+}
+
+body.lockdown {
+	overflow: hidden;
+	touch-action: none;
+}
