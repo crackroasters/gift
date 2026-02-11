@@ -190,13 +190,13 @@ function initLockdown() {
 
 function initAutoScroll() {
 	const scrollDown = () => {
-		window.scrollTo({ top: 2, left: 0, behavior: "instant" })
+		window.scrollTo({ top: 100, left: 0, behavior: "instant" })
 	}
 
 	requestAnimationFrame(() => {
 		scrollDown()
 		setTimeout(scrollDown, 60)
-		setTimeout(scrollDown, 220)
+		setTimeout(scrollDown, 1000)
 	})
 }
 

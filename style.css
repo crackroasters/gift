@@ -145,6 +145,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
     line-height: 1;
+    min-height: 101vh;
 }
 ol, ul {
     list-style: none;
