@@ -258,8 +258,6 @@ body {
     display: block
 }
 
-
-
 .browser {
     display: flex;
     flex-direction: column;
@@ -275,7 +273,6 @@ body {
 .browser-url {
     border-bottom: 1px solid rgb(0 0 0 / 4%);
 }
-
 
 .fortune-browser {
     transform: translate(-50%, -50%);
