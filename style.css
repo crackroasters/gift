@@ -192,9 +192,9 @@ body {
 .title {
 	margin: 0 0 16px;
 
-	font-size: 18px;
+	font-size: 20px;
     font-family: "Poppins";
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .title p {
@@ -286,14 +286,16 @@ body {
 }
 
 .browser-url {
-    border-bottom: 1px solid rgba(0, 0, 0, .25);
+    border-bottom: 1px solid rgb(0 0 0 / 4%);
 }
 
 .browser-logo {
     bottom: 20px;
-    left: 40px;
+    right: 40px;
     width: 280px;
     aspect-ratio: 4/3;
+    border: 1px solid #fafafa;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 12%);
 }
 
 .logo-content {
