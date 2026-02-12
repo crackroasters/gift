@@ -190,38 +190,6 @@ body {
 }
 
 
-.fortune-browser {
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    background-color: #fff;
-}
-
-.fortune-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.title {
-	margin: 0 0 16px;
-
-	font-size: 20px;
-    font-family: "Poppins";
-    font-weight: 500;
-}
-
-.title p {
-    display: block;
-
-    margin-bottom: 10px;
-
-    font-size: 10vw;
-}
 
 .logo {
     position: fixed;
@@ -306,6 +274,40 @@ body {
 
 .browser-url {
     border-bottom: 1px solid rgb(0 0 0 / 4%);
+}
+
+
+.fortune-browser {
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    background-color: #fff;
+}
+
+.fortune-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.title {
+	margin: 0 0 16px;
+
+	font-size: 20px;
+    font-family: "Poppins";
+    font-weight: 500;
+}
+
+.title p {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 10vw;
 }
 
 .browser-logo {
