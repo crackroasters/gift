@@ -286,12 +286,13 @@ body {
 	box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
-.broswer-logo {
+.browser-logo {
     bottom: 20px;
     left: 40px;
     width: 280px;
     aspect-ratio: 4/3;
 }
+
 .logo-content {
     padding: 30px;
     font-size: 24px;
