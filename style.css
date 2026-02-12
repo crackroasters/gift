@@ -170,7 +170,7 @@ button {
 body {
     display: flex;
     align-items: center;
-    min-height: 100vh;
+    height: 102vh;
 	padding: 24px;
     /* background: radial-gradient(circle 44vw, rgb(255, 255, 223) 10%, #b1ffaf 50%, #fff); */
     background-size: cover;
