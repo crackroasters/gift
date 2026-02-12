@@ -285,6 +285,10 @@ body {
 	box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
+.browser-url {
+    border-bottom: 1px solid rgba(0, 0, 0, .25);
+}
+
 .browser-logo {
     bottom: 20px;
     left: 40px;
@@ -293,8 +297,13 @@ body {
 }
 
 .logo-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     padding: 30px;
-    font-size: 24px;
+    font-size: 30px;
     font-family: "Poppins";
     font-weight: 700;
     letter-spacing: -1.5px;
@@ -309,7 +318,7 @@ body {
     background: #111;
 }
 
-.cam-url {
+.browser-url {
     padding: 8px 14px;
     background-color: #fafafa;
     font-size: 12px;
@@ -324,6 +333,16 @@ body {
 	height: 100%;
 	object-fit: cover;
 	transform: scaleX(-1);
+}
+
+.cam-ui {
+	position: absolute;
+	left: 12px;
+	right: 12px;
+	bottom: 12px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .browser-ui {
