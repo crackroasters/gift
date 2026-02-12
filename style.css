@@ -283,15 +283,16 @@ body {
     width: 300px;
     padding: 20px;
     background-color: #111;
-    font-size: 12px;
+    font-size: 14px;
     color: #fafafa;
+    line-height: 1.7;
 }
 
 .fortune-browser {
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
-    width: 600px;
+    width: 650px;
     background-color: #fff;
 }
 
@@ -344,6 +345,7 @@ body {
 
 .camera {
     position: fixed;
+    z-index: 3;
     top: 20px;
     left: 20px;
     width: min(320px, 92vw);
