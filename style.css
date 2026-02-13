@@ -285,18 +285,18 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     top: 20px;
     right: 10px;
     width: 300px;
     aspect-ratio: unset;
-    padding: 20px;
+    padding: 20px 26px;
     background-color: #111;
     font-size: 13px;
     font-weight: 600;
     color: #fafafa;
     text-align: left;
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
 .desc-url {
@@ -331,6 +331,10 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+}
+
+html[data-fortune="good"] {
+    
 }
 
 .title {

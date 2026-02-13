@@ -16,7 +16,18 @@ function playAnim(btn, result) {
 }
 
 function getRandomFortune(fortunes) {
-	return pickRandom(fortunes)
+	const isGood = Math.random() < 0.01
+
+	if (isGood)
+		return {
+			text: "축하해요! 오늘 당신은 상위 1% 안에 드는 행운 가득 크래커예요. 1% 확률을 뚫고 이 운세를 얻었어요.",
+			isGood: true
+		}
+
+	return {
+		text: pickRandom(fortunes),
+		isGood: false
+	}
 }
 
 function initFortune() {
@@ -25,6 +36,8 @@ function initFortune() {
 	const result = document.getElementById("result")
 
 	if (!btn || !retryBtn || !result) return
+
+	const root = document.documentElement
 
 	const fortunes = [
 		"이번주 복권 당첨은 바로 나?!",
@@ -62,19 +75,19 @@ function initFortune() {
 		"오늘은 나를 믿어도 된다!",
 		"오늘의 나는 의외로 강하다!",
 		"오늘은 좋은 소식 예감!",
-		"오늘은 괜히 기대해도 된다!",
+		"기대할 소식이 있을 것 같은 하루!",
 		"오늘은 웃고 끝나는 하루!",
 		"오늘은 당신에게 가장 멋진 하루가 될 거예요!",
 		"오늘은 일이 나를 도와준다!",
 		"오늘의 나 컨디션 최상!",
 		"오늘은 운이 내 편!",
-		"오늘은 괜히 잘 풀린다 진짜로!",
+		"뭔가 잘 풀리는 하루",
 		"오늘은 내가 이긴다!",
 		"오늘은 조금 더 당당해도 된다!",
-		"오늘은 귀엽고 유능하다!",
+		"조금 바보같지만 귀여운 나...?",
 		"오늘의 나는 그냥 합격!",
-		"상사가 오늘 나를 좋아한다!",
-		"오늘은 괜히 칼퇴각이다!",
+		"사랑이 가득한 하루",
+		"과정이 진짜! 결과는 보너스!",
 		"일이 술술 풀리는 날!",
 		"오늘은 잘해도 어색하지 않다!",
 		"오늘은 평소보다 한 수 위!",
@@ -88,9 +101,9 @@ function initFortune() {
 		"오늘은 나를 의심하지 말자",
 		"오늘은 이미 충분히 잘했다!",
 		"그냥 웃자!",
-		"오늘은 어제보다 나은 나!",
+		"어제보다 나은 나!",
 		"행복은 멀리 있지 않다.... 바로 앞에 있다...",
-		"스스로를 믿는 사람은 이미 반쯤 이긴다",
+		"스스로를 믿는 사람은 이미 반쯤 이기고 있다",
 		"지금 걷는 속도가 느려도 방향이 맞다",
 		"잘 살아가는 것 자체가 성과다",
 		"오늘의 나도 충분히 존중받아야 한다",
@@ -106,9 +119,19 @@ function initFortune() {
 		"오늘을 버텼다면 이미 잘한 것이다"
 	]
 
+	const clearRootFortune = () => root.removeAttribute("data-fortune")
+
+	const applyRootFortune = (isGood) => {
+		if (isGood)
+			root.setAttribute("data-fortune", "good")
+		else
+			clearRootFortune()
+	}
+
 	const showStart = () => {
 		resetAnim(btn, result)
 		result.textContent = ""
+		clearRootFortune()
 
 		btn.disabled = false
 		retryBtn.disabled = true
@@ -121,8 +144,9 @@ function initFortune() {
 		resetAnim(btn, result)
 
 		const fortune = getRandomFortune(fortunes)
-		result.textContent = fortune
+		result.textContent = fortune.text
 
+		applyRootFortune(fortune.isGood)
 		playAnim(btn, result)
 
 		btn.disabled = true
