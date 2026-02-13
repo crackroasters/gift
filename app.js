@@ -41,7 +41,7 @@ function launchCelebration(type = "heart") {
 }
 
 function getRandomFortune(fortunes) {
-	const isGood = Math.random() < 0.01
+	const isGood = Math.random() < 1
 
 	if (isGood)
 		return {
