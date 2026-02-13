@@ -18,7 +18,7 @@ function playAnim(btn, result) {
 function launchCelebration(type = "heart") {
 	const count = 24
 
-	for (let i = 0; i < count; i =+ 1) {
+	for (let i = 0; i < count; i += 1) {
 		const particle = document.createElement("span")
 		particle.className = `celebration celebration--${type}`
 
@@ -41,7 +41,7 @@ function launchCelebration(type = "heart") {
 }
 
 function getRandomFortune(fortunes) {
-	const isGood = Math.random() < 1
+	const isGood = Math.random() < 0.01
 
 	if (isGood)
 		return {
@@ -153,12 +153,17 @@ function initFortune() {
 			clearRootFortune()
 	}
 
+	const clearCelebration = () => {
+		document.querySelectorAll(".celebration").forEach((e) => {
+			e.remove()
+		})
+	}
+
 	const showStart = () => {
 		resetAnim(btn, result)
 		result.textContent = ""
 		clearRootFortune()
-
-		document.querySelectorAll(".celebration").forEach((e) => e.remove())
+		clearCelebration()
 
 		btn.disabled = false
 		retryBtn.disabled = true
@@ -169,6 +174,7 @@ function initFortune() {
 
 	const showResult = () => {
 		resetAnim(btn, result)
+		clearCelebration()
 
 		const fortune = getRandomFortune(fortunes)
 		result.textContent = fortune.text
@@ -231,7 +237,7 @@ function initCam() {
 			setStatus("카메라 켜짐")
 		} catch {
 			stopStream()
-			setStatus("권한이 필요함 (Safari 설정 확인)")
+			setStatus("권한이 필요함")
 		}
 	}
 
