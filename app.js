@@ -106,17 +106,36 @@ function initFortune() {
 		"오늘을 버텼다면 이미 잘한 것이다"
 	]
 
-	const runFortune = () => {
+	const showStart = () => {
+		resetAnim(btn, result)
+		result.textContent = ""
+
+		btn.disabled = false
+		retryBtn.disabled = true
+
+		btn.style.display = "inline-flex"
+		retryBtn.style.display = "none"
+	}
+
+	const showResult = () => {
 		resetAnim(btn, result)
 
 		const fortune = getRandomFortune(fortunes)
 		result.textContent = fortune
 
 		playAnim(btn, result)
+
+		btn.disabled = true
+		retryBtn.disabled = false
+
+		btn.style.display = "none"
+		retryBtn.style.display = "inline-flex"
 	}
 
-	btn.addEventListener("click", runFortune)
-	retryBtn.addEventListener("click", runFortune)
+	btn.addEventListener("click", showResult)
+	retryBtn.addEventListener("click", showStart)
+
+	showStart()
 }
 
 function initCam() {

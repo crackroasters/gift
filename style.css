@@ -285,7 +285,8 @@ body {
     aspect-ratio: unset;
     padding: 20px;
     background-color: #111;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     color: #fafafa;
     line-height: 1.7;
 }
@@ -308,10 +309,16 @@ body {
     height: 100%;
 }
 
+.fortune-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .title {
 	margin: 0 0 16px;
 
-	font-size: 20px;
+	font-size: 24px;
     font-family: "Poppins";
     font-weight: 500;
 }
