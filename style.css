@@ -291,6 +291,7 @@ body {
     gap: 10px;
     width: 300px;
     aspect-ratio: unset;
+    padding: 20px;
     background-color: #111;
     font-size: 13px;
     font-weight: 600;
@@ -304,7 +305,6 @@ body {
 }
 
 .desc-content {
-    padding: 20px;
 }
 
 .fortune-browser {
