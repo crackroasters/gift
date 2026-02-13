@@ -23,11 +23,15 @@ function launchCelebration(type = "heart") {
 		particle.className = `celebration celebration--${type}`
 
 		const x = Math.random() * 100
+		const y = Math.random() * 100
 		const delay = Math.random() * 0.3
 		const size = 12 + Math.random() * 12
-		const duration = 10 + Math.random()
+		const duration = type === "heart"
+		? 6 + Math.random() * 2
+		: 10 + Math.random()
 
 		particle.style.left = `${x}vw`
+		particle.style.top = `${y}vh`
 		particle.style.animationDelay = `${delay}s`
 		particle.style.fontSize = `${size}px`
 		particle.style.animationDuration = `${duration}s`
