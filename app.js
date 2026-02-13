@@ -49,7 +49,7 @@ function getRandomFortune(fortunes) {
 
 	if (isGood)
 		return {
-			text: "축하해요! 오늘 당신은 상위 1% 안에 드는 행운 가득 크래커예요. 1% 확률을 뚫고 이 운세를 얻었어요.",
+			text: "축하해요! 오늘 상위 1% 안에 드는 행운 가득 크래커예요. 1% 확률을 뚫고 이 운세를 얻었어요. 오늘 당신의 하루가 무탈하고 행운 가득하길!",
 			isGood: true
 		}
 
@@ -284,7 +284,21 @@ function initAutoScroll() {
 	})
 }
 
+function setToday() {
+	const el = document.querySelector(".today")
+	if (!el) return
+
+	const now = new Date()
+
+	const y = now.getFullYear()
+	const m = String(now.getMonth() + 1).padStart(2, "0")
+	const d = String(now.getDate()).padStart(2, "0")
+
+	el.textContent = `${y}.${m}.${d}`
+}
+
 initFortune()
 initCam()
 initLockdown()
 initAutoScroll()
+setToday()

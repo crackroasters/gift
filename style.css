@@ -481,3 +481,11 @@ body.lockdown {
 		opacity: 0;
 	}
 }
+
+
+.day-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
