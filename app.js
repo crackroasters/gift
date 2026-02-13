@@ -182,6 +182,7 @@ function initFortune() {
 		applyRootFortune(fortune.isGood)
 		if (fortune.isGood)
 			launchCelebration("heart")
+			launchCelebration("flower")
 
 		playAnim(btn, result)
 
