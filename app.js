@@ -15,8 +15,33 @@ function playAnim(btn, result) {
 	})
 }
 
+function launchCelebration(type = "heart") {
+	const count = 24
+
+	for (let i = 0; i < count; i =+ 1) {
+		const particle = document.createElement("span")
+		particle.className = `celebration celebration--${type}`
+
+		const x = Math.random() * 100
+		const delay = Math.random() * 0.3
+		const size = 12 + Math.random() * 12
+		const duration = 2 + Math.random()
+
+		particle.style.left = `${x}vw`
+		particle.style.animationDelay = `${delay}s`
+		particle.style.fontSize = `${size}px`
+		particle.style.animationDuration = `${duration}s`
+
+		document.body.appendChild(particle)
+
+		particle.addEventListener("animationend", () => {
+			particle.remove()
+		})
+	}
+}
+
 function getRandomFortune(fortunes) {
-	const isGood = Math.random() < 1
+	const isGood = Math.random() < 0.01
 
 	if (isGood)
 		return {
@@ -65,7 +90,7 @@ function initFortune() {
 		"운빨 상승 중!",
 		"오늘은 무조건 플러스다!",
 		"귀여움이 성과로 이어지는 날!",
-		"오늘의 나는 약간 사기 캐릭터! 귀여우니까~",
+		"오늘의 나는 약간 사기 캐릭터! 귀엽잖아~",
 		"힘 안 써도 잘 된다!",
 		"그러려니 하고 살자.",
 		"오늘은 무슨 일이든 잘 끝난다!",
@@ -133,6 +158,8 @@ function initFortune() {
 		result.textContent = ""
 		clearRootFortune()
 
+		document.querySelectorAll(".celebration").forEach((e) => e.remove())
+
 		btn.disabled = false
 		retryBtn.disabled = true
 
@@ -147,6 +174,9 @@ function initFortune() {
 		result.textContent = fortune.text
 
 		applyRootFortune(fortune.isGood)
+		if (fortune.isGood)
+			launchCelebration("heart")
+
 		playAnim(btn, result)
 
 		btn.disabled = true
@@ -233,13 +263,13 @@ function initLockdown() {
 
 function initAutoScroll() {
 	const scrollDown = () => {
-		window.scrollTo({ top: 100, left: 0, behavior: "instant" })
+		window.scrollTo({ top: 100, left: 0, behavior: "auto" })
 	}
 
 	requestAnimationFrame(() => {
 		scrollDown()
 		setTimeout(scrollDown, 60)
-		setTimeout(scrollDown, 1000)
+		setTimeout(scrollDown, 900)
 	})
 }
 
