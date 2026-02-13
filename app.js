@@ -25,7 +25,7 @@ function launchCelebration(type = "heart") {
 		const x = Math.random() * 100
 		const delay = Math.random() * 0.3
 		const size = 12 + Math.random() * 12
-		const duration = 2 + Math.random()
+		const duration = 100 + Math.random()
 
 		particle.style.left = `${x}vw`
 		particle.style.animationDelay = `${delay}s`
