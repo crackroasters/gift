@@ -483,9 +483,21 @@ body.lockdown {
 }
 
 
+.day-browser {
+    bottom: 10px;
+    left: 30px;
+}
+
 .day-content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 
     gap: 10px;
+    height: 100%;
+}
+
+.today {
+    font-size: 30px;
+    font-weight: 800;
 }
