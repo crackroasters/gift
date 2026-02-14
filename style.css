@@ -483,7 +483,8 @@ body.lockdown {
 }
 
 
-.day-browser {
+.browser-day {
+    z-index: 3;
     bottom: 10px;
     left: 30px;
 }
