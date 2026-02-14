@@ -487,6 +487,7 @@ body.lockdown {
     z-index: 3;
     bottom: 10px;
     left: 30px;
+    background-color: #fff;
 }
 
 .day-content {
