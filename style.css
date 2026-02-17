@@ -608,6 +608,7 @@ html[data-camera="on"] .effect-bar {
 	display: flex;
 	gap: 10px;
 	flex-wrap: wrap;
+    position: fixed;
 	margin-top: 12px;
 }
 
