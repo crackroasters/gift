@@ -542,11 +542,11 @@ function initEffectsCanvas() {
 		const h = rect.height
 
 		const emoji = pickRandom(active.emojis)
-		const size = 18 + Math.random() * 22
+		const size = 10 + Math.random() * 22
 		const x = Math.random() * w
 		const y = -30
 		const drift = (Math.random() * 60) - 30
-		const speed = 70 + Math.random() * 80
+		const speed = 50 + Math.random() * 80
 		const life = 7 + Math.random() * 3
 		const rot = (Math.random() * 1.2) - 0.6
 
