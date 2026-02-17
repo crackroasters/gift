@@ -485,11 +485,34 @@ function initShotGallery() {
 	const btn = document.querySelector(".film-btn")
 	const gallery = document.getElementById("gallery")
 
+	const preview = document.getElementById("preview")
+	const previewImg = document.getElementById("previewImg")
+	const previewDeleteBtn = document.getElementById("previewDeleteBtn")
+	const previewCloseBtn = document.getElementById("previewCloseBtn")
+
 	if (!video || !wrap || !btn || !gallery) return
+	if (!preview || !previewImg || !previewDeleteBtn || !previewCloseBtn) return
 
 	const ttlMs = 300000
 	const maxItems = 12
 	const shots = []
+
+	let activeId = ""
+
+	const openPreview = (id) => {
+		const shot = shots.find((e) => e.id === id)
+		if (!shot) return
+
+		activeId = id
+		previewImg.src = shot.url
+		preview.setAttribute("aria-hidden", "false")
+	}
+
+	const closePreview = () => {
+		activeId = ""
+		previewImg.removeAttribute("src")
+		preview.setAttribute("aria-hidden", "true")
+	}
 
 	const removeShot = (id) => {
 		const idx = shots.findIndex((e) => e.id === id)
@@ -501,6 +524,8 @@ function initShotGallery() {
 
 		shot.el && shot.el.remove()
 		shots.splice(idx, 1)
+
+		if (activeId === id) closePreview()
 	}
 
 	const trimOverflow = () => {
@@ -525,7 +550,7 @@ function initShotGallery() {
 		item.appendChild(ttl)
 
 		item.addEventListener("click", () => {
-			removeShot(id)
+			openPreview(id)
 		})
 
 		const updateTtl = () => {
@@ -592,6 +617,21 @@ function initShotGallery() {
 		trimOverflow()
 
 		btn.disabled = false
+	})
+
+	preview.addEventListener("click", (e) => {
+		const target = e.target
+		if (!(target instanceof Element)) return
+
+		const key = target.closest("[data-preview]")?.getAttribute("data-preview")
+		if (key === "close") closePreview()
+	})
+
+	previewCloseBtn.addEventListener("click", () => closePreview())
+
+	previewDeleteBtn.addEventListener("click", () => {
+		if (!activeId) return
+		removeShot(activeId)
 	})
 }
 

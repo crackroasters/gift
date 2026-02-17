@@ -643,3 +643,53 @@ html[data-camera="on"] .effect-bar {
     bottom: 20px;
     right: 20px;
 }
+
+.preview {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: none;
+}
+
+.preview[aria-hidden="false"] {
+	display: block;
+}
+
+.preview-bg {
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0.55);
+}
+
+.preview-panel {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate3d(-50%, -50%, 0);
+	width: min(92vw, 520px);
+	border-radius: 18px;
+	overflow: hidden;
+	background: #111;
+}
+
+.preview-img {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.preview-actions {
+	display: flex;
+	gap: 10px;
+	padding: 12px;
+	background: rgba(0,0,0,0.35);
+}
+
+.preview-actions button {
+	flex: 1;
+	padding: 12px 14px;
+	border-radius: 12px;
+	border: 0;
+	background: rgba(255,255,255,0.12);
+	color: #fff;
+}
