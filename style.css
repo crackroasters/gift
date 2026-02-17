@@ -672,14 +672,21 @@ html[data-camera="on"] .film-btn {
 }
 
 .preview-panel::before {
-    content: "Crack\nRoasters.";
+    content: "Crack\ARoasters.";
     display: block;
     opaicty: 0.8;
+    position: absolute;
+    z-index: 100;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    font-size: 24px;
+    font-size: 14px;
     font-family: "Poppins";
     font-weight: 700;
-    letter-spacing: -1.5px;
+    letter-spacing: -1.2px;
+    white-space: pre;
+    color: #fff;
 }
 
 .preview-bg {
