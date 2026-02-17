@@ -583,13 +583,17 @@ html[data-idle="countdown"] .idle-countdown {
 }
 
 .effect-bar {
-    display: flex;
+    display: none;
     align-items: stretch;
     position: absolute;
     z-index: 20;
     top: 40px;
     right: 14px;
     gap: 4px;
+}
+
+html[data-camera="on"] .effect-bar {
+    display: flex;
 }
 
 .effect-btn {
