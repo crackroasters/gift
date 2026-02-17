@@ -424,6 +424,9 @@ html[data-fortune="good"] {
 }
 
 .cam-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 	border: 0;
 	border-radius: 4px;
 	padding: 10px 14px;
@@ -431,7 +434,7 @@ html[data-fortune="good"] {
 	cursor: pointer;
 }
 
-.wrap:has(.result.show) .status-view {
+.status-view {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -439,6 +442,7 @@ html[data-fortune="good"] {
 
 .status-view::before {
     content: "";
+    display: block;
     width: 6px;
     height: 6px;
     border-radius: 100%;
