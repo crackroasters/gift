@@ -36,9 +36,9 @@ function spawnFloatEmoji(host, emoji) {
 
 	const x = Math.random() * 100
 	const size = 16 + Math.random() * 18
-	const duration = 20 + Math.random() * 4
+	const duration = 14 + Math.random() * 4
 	const drift = (Math.random() * 40) - 20
-	const delay = Math.random() * 0.2
+	const delay = Math.random() * 0.4
 
 	const fallPx = rect.height + 120
 
