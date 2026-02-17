@@ -440,7 +440,7 @@ html[data-fortune="good"] {
     align-items: center;
 }
 
-.status-view::before {
+.cam-btn::before {
     content: "";
     display: block;
     width: 6px;
@@ -449,7 +449,7 @@ html[data-fortune="good"] {
     background-color: #ff0000;
 }
 
-html[data-camera="on"] .status-view::before {
+html[data-camera="on"] .cam-btn::before {
     background-color: #00ff2f;
 }
 
