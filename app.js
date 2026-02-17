@@ -201,6 +201,8 @@ function initFortune() {
 	retryBtn.addEventListener("click", showStart)
 
 	showStart()
+
+	window.showStart = showStart
 }
 
 function initCam() {
@@ -258,6 +260,8 @@ function initCam() {
 
 	window.addEventListener("pagehide", stopStream)
 	setStatus("카메라 꺼짐")
+
+	window.stopStream = stopStream
 }
 
 function initLockdown() {
@@ -301,24 +305,79 @@ function setToday() {
 	el.textContent = `${y}.${m}.${d}`
 }
 
-function initAutoReload() {
-	const timeoutMs = 180000 // 3분 = 180,000ms
-	let timer = null
+function initIdleUX() {
+	const root = document.documentElement
+	const countdownEl = document.querySelector(".idle-countdown")
 
-	const resetTimer = () => {
-		if (timer) clearTimeout(timer)
-		timer = setTimeout(() => {
-			location.reload()
-		}, timeoutMs)
+	const idleDimTime = 120000       // 2분
+	const countdownTime = 10000      // 10초
+	const fullResetTime = 180000     // 3분
+
+	let idleTimer = null
+	let countdownTimer = null
+	let finalTimer = null
+	let countdownInterval = null
+
+	const clearTimers = () => {
+		clearTimeout(idleTimer)
+		clearTimeout(countdownTimer)
+		clearTimeout(finalTimer)
+		clearInterval(countdownInterval)
 	}
 
-	const events = ["click", "touchstart", "mousemove", "keydown"]
+	const clearIdleState = () => {
+		root.removeAttribute("data-idle")
+		if (countdownEl) countdownEl.textContent = ""
+	}
 
-	events.forEach((e) => {
-		document.addEventListener(e, resetTimer, { passive: true })
+	const softReset = () => {
+		clearIdleState()
+
+		if (typeof showStart === "function")
+			showStart()
+
+		if (typeof stopStream === "function")
+			stopStream()
+	}
+
+	const startCountdown = () => {
+		let remaining = 10
+		root.dataset.idle = "countdown"
+		if (countdownEl) countdownEl.textContent = remaining
+
+		countdownInterval = setInterval(() => {
+			remaining -= 1
+			if (countdownEl) countdownEl.textContent = remaining
+			if (remaining <= 0) clearInterval(countdownInterval)
+		}, 1000)
+	}
+
+	const startTimers = () => {
+		clearTimers()
+
+		idleTimer = setTimeout(() => {
+			root.dataset.idle = "dim"
+		}, idleDimTime)
+
+		countdownTimer = setTimeout(() => {
+			startCountdown()
+		}, fullResetTime - countdownTime)
+
+		finalTimer = setTimeout(() => {
+			softReset()
+		}, fullResetTime)
+	}
+
+	const userActivity = () => {
+		clearIdleState()
+		startTimers()
+	}
+
+	["click", "touchstart", "mousemove", "keydown"].forEach((e) => {
+		document.addEventListener(e, userActivity, { passive: true })
 	})
 
-	resetTimer()
+	startTimers()
 }
 
 
@@ -327,4 +386,3 @@ initCam()
 initLockdown()
 initAutoScroll()
 setToday()
-initAutoReload()
