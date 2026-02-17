@@ -575,3 +575,16 @@ html[data-idle="countdown"] .idle-countdown {
 		opacity: 0;
 	}
 }
+
+.effect-bar {
+    display: flex;
+    align-items: stretch;
+    position: absolute;
+    z-index: 20;
+    top: 40px;
+    right: 14px;
+}
+
+.effect-btn {
+    border-radius: 4px;
+}
