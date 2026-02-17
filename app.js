@@ -64,7 +64,7 @@ function initEffects() {
 
 	const root = document.documentElement
 
-	const effects = {🤍
+	const effects = {
 		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
 		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
 		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
