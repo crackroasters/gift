@@ -32,17 +32,22 @@ function spawnFloatEmoji(host, emoji) {
 	el.className = "fx"
 	el.textContent = emoji
 
+	const rect = host.getBoundingClientRect()
+
 	const x = Math.random() * 100
 	const size = 16 + Math.random() * 18
-	const duration = 0 + Math.random() * 2
-	const drift = (Math.random() * 40) - 10
+	const duration = 4 + Math.random() * 4
+	const drift = (Math.random() * 40) - 20
 	const delay = Math.random() * 0.4
+
+	const fallPx = rect.height + 120
 
 	el.style.left = `${x}%`
 	el.style.fontSize = `${size}px`
+	el.style.animationDelay = `${delay}s`
 	el.style.setProperty("--fx-duration", `${duration}s`)
 	el.style.setProperty("--fx-drift", `${drift}%`)
-	el.style.animationDelay = `${delay}s`
+	el.style.setProperty("--fx-fall", `${fallPx}px`)
 
 	host.appendChild(el)
 

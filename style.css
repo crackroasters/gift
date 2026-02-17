@@ -555,20 +555,21 @@ html[data-idle="countdown"] .idle-countdown {
 
 .cam-wrap {
 	position: relative;
+    height: 100%;
 	overflow: hidden;
 }
 
 .fx {
 	position: absolute;
 	left: 0;
-	top: -10%;
+	top: -40px;
 	z-index: 10;
 	pointer-events: none;
-	animation: fxFloat var(--fx-duration) linear forwards;
+	animation: fxFall var(--fx-duration) linear forwards;
 	will-change: transform, opacity;
 }
 
-@keyframes fxFloat {
+@keyframes fxFall {
 	0% {
 		transform: translate3d(0, 0, 0);
 		opacity: 0;
@@ -577,7 +578,7 @@ html[data-idle="countdown"] .idle-countdown {
 		opacity: 1;
 	}
 	100% {
-		transform: translate3d(var(--fx-drift), 120%, 0);
+		transform: translate3d(var(--fx-drift), var(--fx-fall), 0);
 		opacity: 0;
 	}
 }
