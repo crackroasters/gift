@@ -465,7 +465,7 @@ body.lockdown * {
 	-webkit-touch-callout: none;
 }
 
-body.lockdown :is(#camToggleBtn, #fortuneBtn, #fortuneRetryBtn, .effect-btn, .cam-btn) {
+body.lockdown :is(#camToggleBtn, #fortuneBtn, #fortuneRetryBtn, .effect-btn, .film-btn) {
 	pointer-events: auto;
 }
 
@@ -636,4 +636,10 @@ html[data-camera="on"] .effect-bar {
 	background: rgba(0,0,0,0.45);
 	padding: 2px 6px;
 	border-radius: 999px;
+}
+
+.film-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
 }
