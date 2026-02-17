@@ -36,7 +36,7 @@ function spawnFloatEmoji(host, emoji) {
 
 	const x = Math.random() * 100
 	const size = 16 + Math.random() * 14
-	const duration = 14 + Math.random() * 4
+	const duration = 2 + Math.random() * 4
 	const drift = (Math.random() * 40) + 30 
 	const delay = Math.random() * 0.4
 
@@ -479,6 +479,123 @@ function initIdleUX() {
 	startTimers()
 }
 
+function initShotGallery() {
+	const video = document.getElementById("cam")
+	const wrap = document.getElementById("camWrap")
+	const btn = document.getElementById("shotBtn")
+	const gallery = document.getElementById("gallery")
+
+	if (!video || !wrap || !btn || !gallery) return
+
+	const ttlMs = 300000
+	const maxItems = 12
+	const shots = []
+
+	const removeShot = (id) => {
+		const idx = shots.findIndex((e) => e.id === id)
+		if (idx < 0) return
+
+		const shot = shots[idx]
+		clearTimeout(shot.timer)
+		shot.url && URL.revokeObjectURL(shot.url)
+
+		shot.el && shot.el.remove()
+		shots.splice(idx, 1)
+	}
+
+	const trimOverflow = () => {
+		while (shots.length > maxItems)
+			removeShot(shots[0].id)
+	}
+
+	const makeItem = (url, expireAt, id) => {
+		const item = document.createElement("div")
+		item.className = "gallery-item"
+		item.dataset.id = id
+
+		const img = document.createElement("img")
+		img.src = url
+		img.alt = "shot"
+
+		const ttl = document.createElement("div")
+		ttl.className = "ttl"
+		ttl.textContent = "5:00"
+
+		item.appendChild(img)
+		item.appendChild(ttl)
+
+		item.addEventListener("click", () => {
+			removeShot(id)
+		})
+
+		const updateTtl = () => {
+			const left = expireAt - Date.now()
+			if (left <= 0) return
+
+			const sec = Math.ceil(left / 1000)
+			const mm = String(Math.floor(sec / 60)).padStart(1, "0")
+			const ss = String(sec % 60).padStart(2, "0")
+			ttl.textContent = `${mm}:${ss}`
+		}
+
+		const interval = setInterval(() => {
+			if (!document.body.contains(item)) return clearInterval(interval)
+			updateTtl()
+		}, 1000)
+
+		updateTtl()
+		return item
+	}
+
+	const captureFrame = async () => {
+		if (video.readyState < 2) return null
+
+		const w = video.videoWidth
+		const h = video.videoHeight
+		if (!w || !h) return null
+
+		const canvas = document.createElement("canvas")
+		canvas.width = w
+		canvas.height = h
+
+		const ctx = canvas.getContext("2d")
+		if (!ctx) return null
+
+		ctx.drawImage(video, 0, 0, w, h)
+
+		const blob = await new Promise((resolve) => {
+			canvas.toBlob((b) => resolve(b), "image/jpeg", 0.88)
+		})
+
+		return blob || null
+	}
+
+	btn.addEventListener("click", async () => {
+		btn.disabled = true
+
+		const blob = await captureFrame()
+		if (!blob) return btn.disabled = false
+
+		const url = URL.createObjectURL(blob)
+		const id = crypto?.randomUUID ? crypto.randomUUID() : String(Date.now())
+
+		const expireAt = Date.now() + ttlMs
+		const el = makeItem(url, expireAt, id)
+
+		gallery.prepend(el)
+
+		const timer = setTimeout(() => {
+			removeShot(id)
+		}, ttlMs)
+
+		shots.push({ id, url, el, timer })
+		trimOverflow()
+
+		btn.disabled = false
+	})
+}
+
+
 
 initFortune()
 initCam()
@@ -486,3 +603,4 @@ initLockdown()
 initAutoScroll()
 setToday()
 initEffects()
+initShotGallery()
