@@ -465,7 +465,7 @@ body.lockdown * {
 	-webkit-touch-callout: none;
 }
 
-body.lockdown :is(#camToggleBtn, #fortuneBtn, #fortuneRetryBtn, .effect-btn, .film-btn, .gallery-item) {
+body.lockdown :is(#camToggleBtn, #fortuneBtn, #fortuneRetryBtn, .effect-btn, .film-btn, .gallery-item, #previewCloseBtn, #previewDeleteBtn) {
 	pointer-events: auto;
 }
 
@@ -626,6 +626,7 @@ html[data-camera="on"] .effect-bar {
 	height: 100%;
 	object-fit: cover;
 	display: block;
+    transform: scaleX(-1);
 }
 
 .gallery-item .ttl {
@@ -677,6 +678,7 @@ html[data-camera="on"] .effect-bar {
 	width: 100%;
 	height: auto;
 	display: block;
+    transform: scaleX(-1);
 }
 
 .preview-actions {
