@@ -482,7 +482,7 @@ function initIdleUX() {
 function initShotGallery() {
 	const video = document.getElementById("cam")
 	const wrap = document.getElementById("camWrap")
-	const btn = document.getElementById("shotBtn")
+	const btn = document.querySelector(".film-btn")
 	const gallery = document.getElementById("gallery")
 
 	if (!video || !wrap || !btn || !gallery) return
