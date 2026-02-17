@@ -68,7 +68,8 @@ function initEffects() {
 		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
 		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
 		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
-		"4": { name: "bubble", emojis: ["🫧", "🔵", "💧"] }
+		"4": { name: "bubble", emojis: ["🫧", "❄️", "🩵"] },
+		"5": { name: "heart", emojis: ["🩷", "🌸", "🎀"] }
 	}
 
 	let timer = null
