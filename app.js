@@ -221,6 +221,7 @@ function initCam() {
 		video.srcObject = null
 		toggleBtn.textContent = "카메라 켜기"
 		setStatus("카메라 꺼짐")
+		document.documentElement.dataset.camera = "";
 	}
 
 	const startStream = async () => {
