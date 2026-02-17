@@ -306,7 +306,7 @@ function initFortune() {
 function initCam() {
 	const video = document.getElementById("cam")
 	const toggleBtn = document.getElementById("camToggleBtn")
-	const camText = document.getElementsByClassName("cam-text");
+	const camText = document.querySelector(".cam-text");
 	const status = document.getElementById("camStatus")
 
 	if (!video || !toggleBtn || !status || !camText) return
