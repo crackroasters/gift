@@ -449,7 +449,7 @@ html[data-fortune="good"] {
     background-color: #ff0000;
 }
 
-.wrap:has(.result.show) .status-view::before {
+html[data-camera="on"] .status-view::before {
     background-color: #00ff2f;
 }
 

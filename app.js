@@ -240,9 +240,11 @@ function initCam() {
 
 			toggleBtn.textContent = "카메라 끄기"
 			setStatus("카메라 켜짐")
+			document.documentElement.dataset.camera = "on";
 		} catch {
 			stopStream()
 			setStatus("권한이 필요함")
+			document.documentElement.dataset.camera = "";
 		}
 	}
 
