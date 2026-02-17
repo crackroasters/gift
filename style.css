@@ -561,7 +561,7 @@ html[data-idle="countdown"] .idle-countdown {
 .fx {
 	position: absolute;
 	left: 0;
-	bottom: -10%;
+	top: -10%;
 	z-index: 10;
 	pointer-events: none;
 	animation: fxFloat var(--fx-duration) linear forwards;
@@ -577,7 +577,7 @@ html[data-idle="countdown"] .idle-countdown {
 		opacity: 1;
 	}
 	100% {
-		transform: translate3d(var(--fx-drift), -120%, 0);
+		transform: translate3d(var(--fx-drift), 120%, 0);
 		opacity: 0;
 	}
 }
