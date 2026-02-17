@@ -465,10 +465,7 @@ body.lockdown * {
 	-webkit-touch-callout: none;
 }
 
-body.lockdown #camToggleBtn,
-body.lockdown #fortuneBtn,
-body.lockdown #fortuneRetryBtn,
-body.lockdown .effect-btn {
+body.lockdown :is(#camToggleBtn, #fortuneBtn, #fortuneRetryBtn, .effect-btn, .cam-btn) {
 	pointer-events: auto;
 }
 
