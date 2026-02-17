@@ -553,11 +553,16 @@ html[data-idle="countdown"] .idle-countdown {
 }
 
 
+.cam-wrap {
+	position: relative;
+	overflow: hidden;
+}
+
 .fx {
-	position: fixed;
+	position: absolute;
 	left: 0;
-	bottom: -10vh;
-	z-index: 9999;
+	bottom: -10%;
+	z-index: 10;
 	pointer-events: none;
 	animation: fxFloat var(--fx-duration) linear forwards;
 	will-change: transform, opacity;
@@ -572,7 +577,7 @@ html[data-idle="countdown"] .idle-countdown {
 		opacity: 1;
 	}
 	100% {
-		transform: translate3d(var(--fx-drift), -120vh, 0);
+		transform: translate3d(var(--fx-drift), -120%, 0);
 		opacity: 0;
 	}
 }
@@ -584,8 +589,12 @@ html[data-idle="countdown"] .idle-countdown {
     z-index: 20;
     top: 40px;
     right: 14px;
+    gap: 4px;
 }
 
 .effect-btn {
     border-radius: 4px;
-}e
+    border: 0;
+    padding: 2px 6px;
+    font-size: 10px;
+}

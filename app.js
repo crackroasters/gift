@@ -15,15 +15,19 @@ function playAnim(btn, result) {
 	})
 }
 
-function removeEffects() {
-	document.querySelectorAll(".fx").forEach((e) => {
+function removeEffects(host) {
+	if (!host) return
+
+	host.querySelectorAll(".fx").forEach((e) => {
 		e.remove()
 	})
 
 	document.documentElement.removeAttribute("data-effect")
 }
 
-function spawnFloatEmoji(emoji) {
+function spawnFloatEmoji(host, emoji) {
+	if (!host) return
+
 	const el = document.createElement("span")
 	el.className = "fx"
 	el.textContent = emoji
@@ -34,13 +38,13 @@ function spawnFloatEmoji(emoji) {
 	const drift = (Math.random() * 40) - 20
 	const delay = Math.random() * 0.4
 
-	el.style.left = `${x}vw`
+	el.style.left = `${x}%`
 	el.style.fontSize = `${size}px`
 	el.style.setProperty("--fx-duration", `${duration}s`)
-	el.style.setProperty("--fx-drift", `${drift}vw`)
+	el.style.setProperty("--fx-drift", `${drift}%`)
 	el.style.animationDelay = `${delay}s`
 
-	document.body.appendChild(el)
+	host.appendChild(el)
 
 	el.addEventListener("animationend", () => {
 		el.remove()
@@ -49,7 +53,9 @@ function spawnFloatEmoji(emoji) {
 
 function initEffects() {
 	const bar = document.querySelector(".effect-bar")
-	if (!bar) return
+	const host = document.getElementById("camWrap") || document.querySelector(".cam-wrap") || document.querySelector(".camera")
+
+	if (!bar || !host) return
 
 	const root = document.documentElement
 
@@ -67,7 +73,7 @@ function initEffects() {
 		if (timer) clearInterval(timer)
 		timer = null
 		activeEmojis = []
-		removeEffects()
+		removeEffects(host)
 	}
 
 	const start = (key) => {
@@ -81,7 +87,7 @@ function initEffects() {
 
 		timer = setInterval(() => {
 			if (!activeEmojis.length) return
-			spawnFloatEmoji(pickRandom(activeEmojis))
+			spawnFloatEmoji(host, pickRandom(activeEmojis))
 		}, 350)
 	}
 
