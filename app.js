@@ -301,8 +301,30 @@ function setToday() {
 	el.textContent = `${y}.${m}.${d}`
 }
 
+function initAutoReload() {
+	const timeoutMs = 180000 // 3분 = 180,000ms
+	let timer = null
+
+	const resetTimer = () => {
+		if (timer) clearTimeout(timer)
+		timer = setTimeout(() => {
+			location.reload()
+		}, timeoutMs)
+	}
+
+	const events = ["click", "touchstart", "mousemove", "keydown"]
+
+	events.forEach((e) => {
+		document.addEventListener(e, resetTimer, { passive: true })
+	})
+
+	resetTimer()
+}
+
+
 initFortune()
 initCam()
 initLockdown()
 initAutoScroll()
 setToday()
+initAutoReload()
