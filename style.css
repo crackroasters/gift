@@ -550,3 +550,28 @@ html[data-idle="dim"] {
 html[data-idle="countdown"] .idle-countdown {
 	opacity: 1;
 }
+
+
+.fx {
+	position: fixed;
+	left: 0;
+	bottom: -10vh;
+	z-index: 9999;
+	pointer-events: none;
+	animation: fxFloat var(--fx-duration) linear forwards;
+	will-change: transform, opacity;
+}
+
+@keyframes fxFloat {
+	0% {
+		transform: translate3d(0, 0, 0);
+		opacity: 0;
+	}
+	10% {
+		opacity: 1;
+	}
+	100% {
+		transform: translate3d(var(--fx-drift), -120vh, 0);
+		opacity: 0;
+	}
+}

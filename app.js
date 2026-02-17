@@ -15,6 +15,93 @@ function playAnim(btn, result) {
 	})
 }
 
+function removeEffects() {
+	document.querySelectorAll(".fx").forEach((e) => {
+		e.remove()
+	})
+
+	document.documentElement.removeAttribute("data-effect")
+}
+
+function spawnFloatEmoji(emoji) {
+	const el = document.createElement("span")
+	el.className = "fx"
+	el.textContent = emoji
+
+	const x = Math.random() * 100
+	const size = 16 + Math.random() * 18
+	const duration = 6 + Math.random() * 4
+	const drift = (Math.random() * 40) - 20
+	const delay = Math.random() * 0.4
+
+	el.style.left = `${x}vw`
+	el.style.fontSize = `${size}px`
+	el.style.setProperty("--fx-duration", `${duration}s`)
+	el.style.setProperty("--fx-drift", `${drift}vw`)
+	el.style.animationDelay = `${delay}s`
+
+	document.body.appendChild(el)
+
+	el.addEventListener("animationend", () => {
+		el.remove()
+	})
+}
+
+function initEffects() {
+	const bar = document.querySelector(".effect-bar")
+	if (!bar) return
+
+	const root = document.documentElement
+
+	const effects = {
+		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
+		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
+		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
+		"4": { name: "bubble", emojis: ["🫧", "🔵", "💧"] }
+	}
+
+	let timer = null
+	let activeEmojis = []
+
+	const stop = () => {
+		if (timer) clearInterval(timer)
+		timer = null
+		activeEmojis = []
+		removeEffects()
+	}
+
+	const start = (key) => {
+		const effect = effects[key]
+		if (!effect) return
+
+		stop()
+
+		root.setAttribute("data-effect", effect.name)
+		activeEmojis = effect.emojis
+
+		timer = setInterval(() => {
+			if (!activeEmojis.length) return
+			spawnFloatEmoji(pickRandom(activeEmojis))
+		}, 350)
+	}
+
+	bar.addEventListener("click", (e) => {
+		const btn = e.target.closest(".effect-btn")
+		if (!btn) return
+
+		const key = btn.dataset.effect
+		if (key === "off") return stop()
+
+		start(key)
+	})
+
+	window.addEventListener("pagehide", stop)
+
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) stop()
+	})
+}
+
 function launchCelebration(type = "heart") {
 	const count = 24
 
@@ -386,3 +473,4 @@ initCam()
 initLockdown()
 initAutoScroll()
 setToday()
+initEffects()
