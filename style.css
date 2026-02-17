@@ -431,6 +431,24 @@ html[data-fortune="good"] {
 	cursor: pointer;
 }
 
+.wrap:has(.result.show) .status-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.status-view::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 100%;
+    background-color: #ff0000;
+}
+
+.wrap:has(.result.show) .status-view::before {
+    background-color: #00ff2f;
+}
+
 .cam-status {
 	font-size: 13px;
 	opacity: .85;
