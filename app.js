@@ -93,7 +93,7 @@ function initEffects() {
 		timer = setInterval(() => {
 			if (!activeEmojis.length) return
 			spawnFloatEmoji(host, pickRandom(activeEmojis))
-		}, 350)
+		}, 1050)
 	}
 
 	bar.addEventListener("click", (e) => {
