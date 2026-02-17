@@ -35,9 +35,9 @@ function spawnFloatEmoji(host, emoji) {
 	const rect = host.getBoundingClientRect()
 
 	const x = Math.random() * 100
-	const size = 16 + Math.random() * 18
+	const size = 16 + Math.random() * 14
 	const duration = 14 + Math.random() * 4
-	const drift = (Math.random() * 40) 
+	const drift = (Math.random() * 40) + 30 
 	const delay = Math.random() * 0.4
 
 	const fallPx = rect.height + 120
@@ -64,11 +64,11 @@ function initEffects() {
 
 	const root = document.documentElement
 
-	const effects = {
+	const effects = {🤍
 		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
 		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
 		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
-		"4": { name: "bubble", emojis: ["🫧", "❄️", "🩵"] },
+		"4": { name: "bubble", emojis: ["🫧", "🤍", "🩵"] },
 		"5": { name: "heart", emojis: ["🩷", "🌸", "🎀"] }
 	}
 
