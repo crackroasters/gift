@@ -479,6 +479,180 @@ function initIdleUX() {
 	startTimers()
 }
 
+function initEffectsCanvas() {
+	const bar = document.querySelector(".effect-bar")
+	const host = document.getElementById("camWrap")
+	const canvas = document.getElementById("fxCanvas")
+
+	if (!bar || !host || !canvas) return
+
+	const root = document.documentElement
+	const ctx = canvas.getContext("2d")
+	if (!ctx) return
+
+	const effects = {
+		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
+		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
+		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
+		"4": { name: "bubble", emojis: ["🫧", "🔵", "💧"] },
+		"5": { name: "heart", emojis: ["💖", "💗", "💘"] }
+	}
+
+	let active = { name: "", emojis: [] }
+	let timer = null
+	let raf = 0
+	let particles = []
+
+	const fitCanvas = () => {
+		const rect = host.getBoundingClientRect()
+		const dpr = window.devicePixelRatio || 1
+
+		canvas.width = Math.max(1, Math.floor(rect.width * dpr))
+		canvas.height = Math.max(1, Math.floor(rect.height * dpr))
+
+		canvas.style.width = `${rect.width}px`
+		canvas.style.height = `${rect.height}px`
+
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	}
+
+	const clearCanvas = () => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
+	}
+
+	const stop = () => {
+		if (timer) clearInterval(timer)
+		timer = null
+
+		if (raf) cancelAnimationFrame(raf)
+		raf = 0
+
+		particles = []
+		active = { name: "", emojis: [] }
+
+		root.removeAttribute("data-effect")
+		clearCanvas()
+	}
+
+	const spawn = () => {
+		if (!active.emojis.length) return
+
+		const rect = host.getBoundingClientRect()
+		const w = rect.width
+		const h = rect.height
+
+		const emoji = pickRandom(active.emojis)
+		const size = 18 + Math.random() * 22
+		const x = Math.random() * w
+		const y = -30
+		const drift = (Math.random() * 60) - 30
+		const speed = 70 + Math.random() * 80
+		const life = 7 + Math.random() * 3
+		const rot = (Math.random() * 1.2) - 0.6
+
+		particles.push({
+			emoji,
+			x,
+			y,
+			size,
+			drift,
+			speed,
+			life,
+			age: 0,
+			rot
+		})
+
+		if (particles.length > 80)
+			particles.splice(0, particles.length - 80)
+	}
+
+	let lastTs = 0
+
+	const tick = (ts) => {
+		if (!lastTs) lastTs = ts
+		const dt = Math.min(0.05, (ts - lastTs) / 1000)
+		lastTs = ts
+
+		const rect = host.getBoundingClientRect()
+		const w = rect.width
+		const h = rect.height
+
+		clearCanvas()
+
+		ctx.textAlign = "center"
+		ctx.textBaseline = "middle"
+
+		particles = particles.filter((p) => {
+			p.age += dt
+			if (p.age >= p.life) return false
+
+			const t = p.age / p.life
+			const sway = Math.sin(t * Math.PI * 2) * (p.drift * 0.2)
+
+			p.y += p.speed * dt
+			p.x += (p.drift * dt) + sway * dt
+
+			const alpha = t < 0.08 ? t / 0.08 : 1
+			const fade = t > 0.92 ? (1 - t) / 0.08 : 1
+			const a = Math.max(0, Math.min(1, alpha * fade))
+
+			ctx.save()
+			ctx.globalAlpha = a
+			ctx.font = `${p.size}px Poppins, system-ui, sans-serif`
+			ctx.translate(p.x, p.y)
+			ctx.rotate(p.rot * t)
+			ctx.fillText(p.emoji, 0, 0)
+			ctx.restore()
+
+			return p.y < h + 80 && p.x > -80 && p.x < w + 80
+		})
+
+		raf = requestAnimationFrame(tick)
+	}
+
+	const start = (key) => {
+		const eff = effects[key]
+		if (!eff) return
+
+		stop()
+		fitCanvas()
+
+		active = { name: eff.name, emojis: eff.emojis }
+		root.setAttribute("data-effect", eff.name)
+
+		timer = setInterval(() => {
+			for (let i = 0; i < 2; i += 1)
+				spawn()
+		}, 250)
+
+		raf = requestAnimationFrame(tick)
+	}
+
+	bar.addEventListener("click", (e) => {
+		const btn = e.target.closest(".effect-btn")
+		if (!btn) return
+
+		const key = btn.dataset.effect
+		if (key === "off") return stop()
+
+		start(key)
+	})
+
+	window.addEventListener("resize", () => {
+		if (!active.emojis.length) return
+		fitCanvas()
+	})
+
+	window.addEventListener("pagehide", stop)
+
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) stop()
+	})
+
+	window.getFxCanvas = () => canvas
+	window.stopEffects = stop
+}
+
 function initShotGallery() {
 	const video = document.getElementById("cam")
 	const wrap = document.getElementById("camWrap")
@@ -572,24 +746,42 @@ function initShotGallery() {
 		return item
 	}
 
-	const captureFrame = async () => {
+	const captureComposite = async () => {
 		if (video.readyState < 2) return null
 
 		const w = video.videoWidth
 		const h = video.videoHeight
 		if (!w || !h) return null
 
-		const canvas = document.createElement("canvas")
-		canvas.width = w
-		canvas.height = h
+		const fxCanvas = window.getFxCanvas ? window.getFxCanvas() : null
 
-		const ctx = canvas.getContext("2d")
+		const capture = document.createElement("canvas")
+		capture.width = w
+		capture.height = h
+
+		const ctx = capture.getContext("2d")
 		if (!ctx) return null
 
 		ctx.drawImage(video, 0, 0, w, h)
 
+		if (fxCanvas) {
+			const rect = wrap.getBoundingClientRect()
+			const sx = 0
+			const sy = 0
+			const sw = fxCanvas.width
+			const sh = fxCanvas.height
+
+			const scaleX = w / rect.width
+			const scaleY = h / rect.height
+
+			const dw = rect.width * scaleX
+			const dh = rect.height * scaleY
+
+			ctx.drawImage(fxCanvas, sx, sy, sw, sh, 0, 0, dw, dh)
+		}
+
 		const blob = await new Promise((resolve) => {
-			canvas.toBlob((b) => resolve(b), "image/jpeg", 0.88)
+			capture.toBlob((b) => resolve(b), "image/jpeg", 0.9)
 		})
 
 		return blob || null
@@ -598,7 +790,7 @@ function initShotGallery() {
 	btn.addEventListener("click", async () => {
 		btn.disabled = true
 
-		const blob = await captureFrame()
+		const blob = await captureComposite()
 		if (!blob) return btn.disabled = false
 
 		const url = URL.createObjectURL(blob)
@@ -637,10 +829,13 @@ function initShotGallery() {
 
 
 
+
 initFortune()
 initCam()
 initLockdown()
 initAutoScroll()
 setToday()
 initEffects()
+initEffectsCanvas()
 initShotGallery()
+
