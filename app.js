@@ -206,9 +206,10 @@ function initFortune() {
 function initCam() {
 	const video = document.getElementById("cam")
 	const toggleBtn = document.getElementById("camToggleBtn")
+	const camText = document.getElementsByClassName("cam-text");
 	const status = document.getElementById("camStatus")
 
-	if (!video || !toggleBtn || !status) return
+	if (!video || !toggleBtn || !status || !camText) return
 
 	let stream = null
 
@@ -219,7 +220,7 @@ function initCam() {
 		stream.getTracks().forEach((t) => t.stop())
 		stream = null
 		video.srcObject = null
-		toggleBtn.textContent = "카메라 켜기"
+		camText.textContent = "카메라 켜기"
 		setStatus("카메라 꺼짐")
 		document.documentElement.dataset.camera = "";
 	}
@@ -239,7 +240,7 @@ function initCam() {
 			video.srcObject = stream
 			await video.play()
 
-			toggleBtn.textContent = "카메라 끄기"
+			camText.textContent = "카메라 끄기"
 			setStatus("카메라 켜짐")
 			document.documentElement.dataset.camera = "on";
 		} catch {
