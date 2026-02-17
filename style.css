@@ -467,7 +467,8 @@ body.lockdown * {
 
 body.lockdown #camToggleBtn,
 body.lockdown #fortuneBtn,
-body.lockdown #fortuneRetryBtn {
+body.lockdown #fortuneRetryBtn,
+body.lockdown .effect-btn {
 	pointer-events: auto;
 }
 
@@ -587,4 +588,4 @@ html[data-idle="countdown"] .idle-countdown {
 
 .effect-btn {
     border-radius: 4px;
-}
+}e
