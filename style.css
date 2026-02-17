@@ -454,6 +454,7 @@ html[data-camera="on"] .status-view::before {
 }
 
 .cam-status {
+    display: none;
 	font-size: 13px;
 	opacity: .85;
 }
@@ -649,9 +650,14 @@ html[data-camera="on"] .effect-bar {
 }
 
 .film-btn {
+    display: none;
     position: absolute;
     bottom: 20px;
     right: 20px;
+}
+
+html[data-camera="on"] .film-btn {
+    display: block;
 }
 
 .preview {
@@ -663,6 +669,17 @@ html[data-camera="on"] .effect-bar {
 
 .preview[aria-hidden="false"] {
 	display: block;
+}
+
+.preview-panel::before {
+    content: "Crack\nRoasters.";
+    display: block;
+    opaicty: 0.8;
+    width: 100%;
+    font-size: 24px;
+    font-family: "Poppins";
+    font-weight: 700;
+    letter-spacing: -1.5px;
 }
 
 .preview-bg {
