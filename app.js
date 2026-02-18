@@ -732,8 +732,10 @@ function initShotGallery() {
 		item.appendChild(img)
 		item.appendChild(ttl)
 
-		const style = makeShotStyle(86)
+		const avoidEl = document.querySelector(".camera")
+		const style = makeShotStyle(86, avoidEl)
 		applyShotStyle(item, style)
+
 
 		item.addEventListener("click", () => {
 			openPreview(id)
@@ -841,17 +843,59 @@ function initShotGallery() {
 
 	const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 
-	const makeShotStyle = (size) => {
-		const pad = 16
+	const rectIntersects = (a, b) =>
+		a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
 
+	const makeShotStyle = (size, avoidEl) => {
+		const pad = 18
 		const w = window.innerWidth
 		const h = window.innerHeight
 
 		const maxX = Math.max(pad, w - size - pad)
 		const maxY = Math.max(pad, h - size - pad)
 
-		const x = clamp(Math.random() * w, pad, maxX)
-		const y = clamp(Math.random() * h, pad, maxY)
+		const avoidRect = avoidEl ? avoidEl.getBoundingClientRect() : null
+		const triesMax = 80
+
+		let x = 0
+		let y = 0
+		let placed = false
+
+		for (let i = 0; i < triesMax; i =+ 1) {
+			x = clamp(Math.random() * w, pad, maxX)
+			y = clamp(Math.random() * h, pad, maxY)
+
+			if (!avoidRect) { placed = true; break }
+
+			const shotRect = {
+				left: x,
+				top: y,
+				right: x + size,
+				bottom: y + size
+			}
+
+			if (!rectIntersects(shotRect, avoidRect)) { placed = true; break }
+		}
+
+		if (!placed && avoidRect) {
+			const leftSpace = avoidRect.left - pad
+			const rightSpace = w - avoidRect.right - pad
+			const topSpace = avoidRect.top - pad
+			const bottomSpace = h - avoidRect.bottom - pad
+
+			const canLeft = leftSpace >= size
+			const canRight = rightSpace >= size
+			const canTop = topSpace >= size
+			const canBottom = bottomSpace >= size
+
+			if (canLeft) x = clamp(Math.random() * leftSpace, pad, avoidRect.left - size - pad)
+			if (!canLeft && canRight) x = clamp(avoidRect.right + Math.random() * rightSpace, avoidRect.right + pad, maxX)
+			if (!canLeft && !canRight) x = clamp(x, pad, maxX)
+
+			if (canTop) y = clamp(Math.random() * topSpace, pad, avoidRect.top - size - pad)
+			if (!canTop && canBottom) y = clamp(avoidRect.bottom + Math.random() * bottomSpace, avoidRect.bottom + pad, maxY)
+			if (!canTop && !canBottom) y = clamp(y, pad, maxY)
+		}
 
 		const rot = (Math.random() * 18) - 9
 		const z = Math.floor(10 + Math.random() * 90)
@@ -865,6 +909,26 @@ function initShotGallery() {
 		item.style.zIndex = String(style.z)
 		item.style.setProperty("--rot", `${style.rot}deg`)
 	}
+	const clampAllShots = () => {
+	const size = 86
+	const pad = 18
+	const w = window.innerWidth
+	const h = window.innerHeight
+
+	const maxX = Math.max(pad, w - size - pad)
+	const maxY = Math.max(pad, h - size - pad)
+
+	document.querySelectorAll("#gallery .gallery-item").forEach((e) => {
+		const left = parseFloat(e.style.left || "0")
+		const top = parseFloat(e.style.top || "0")
+
+		e.style.left = `${clamp(left, pad, maxX)}px`
+		e.style.top = `${clamp(top, pad, maxY)}px`
+	})
+}
+
+window.addEventListener("resize", clampAllShots)
+
 
 }
 
