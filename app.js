@@ -37,7 +37,7 @@ function spawnFloatEmoji(host, emoji) {
 	const x = Math.random() * 100
 	const size = 16 + Math.random() * 14
 	const duration = 2 + Math.random() * 4
-	const drift = (Math.random() * 40) + 30 
+	const drift = (Math.random() * 40) + 30
 	const delay = Math.random() * 0.4
 
 	const fallPx = rect.height + 120
@@ -63,6 +63,7 @@ function initEffects() {
 	if (!bar || !host) return
 
 	const root = document.documentElement
+	const isCamOn = () => root.dataset.camera === "on"
 
 	const effects = {
 		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
@@ -83,6 +84,8 @@ function initEffects() {
 	}
 
 	const start = (key) => {
+		if (!isCamOn()) return stop()
+
 		const effect = effects[key]
 		if (!effect) return
 
@@ -92,6 +95,7 @@ function initEffects() {
 		activeEmojis = effect.emojis
 
 		timer = setInterval(() => {
+			if (!isCamOn()) return stop()
 			if (!activeEmojis.length) return
 			spawnFloatEmoji(host, pickRandom(activeEmojis))
 		}, 1050)
@@ -103,6 +107,7 @@ function initEffects() {
 
 		const key = btn.dataset.effect
 		if (key === "off") return stop()
+		if (!isCamOn()) return stop()
 
 		start(key)
 	})
@@ -112,6 +117,8 @@ function initEffects() {
 	document.addEventListener("visibilitychange", () => {
 		if (document.hidden) stop()
 	})
+
+	window.stopSpanEffects = stop
 }
 
 function launchCelebration(type = "heart") {
@@ -126,8 +133,8 @@ function launchCelebration(type = "heart") {
 		const delay = Math.random() * 0.3
 		const size = 12 + Math.random() * 12
 		const duration = type === "heart"
-		? 10 + Math.random() * 2
-		: 13 + Math.random()
+			? 10 + Math.random() * 2
+			: 13 + Math.random()
 
 		particle.style.left = `${x}vw`
 		particle.style.top = `${y}vh`
@@ -250,10 +257,8 @@ function initFortune() {
 	const clearRootFortune = () => root.removeAttribute("data-fortune")
 
 	const applyRootFortune = (isGood) => {
-		if (isGood)
-			root.setAttribute("data-fortune", "good")
-		else
-			clearRootFortune()
+		if (isGood) root.setAttribute("data-fortune", "good")
+		if (!isGood) clearRootFortune()
 	}
 
 	const clearCelebration = () => {
@@ -283,9 +288,8 @@ function initFortune() {
 		result.textContent = fortune.text
 
 		applyRootFortune(fortune.isGood)
-		if (fortune.isGood)
-			launchCelebration("heart")
-			launchCelebration("flower")
+		if (fortune.isGood) launchCelebration("heart")
+		if (fortune.isGood) launchCelebration("flower")
 
 		playAnim(btn, result)
 
@@ -307,7 +311,7 @@ function initFortune() {
 function initCam() {
 	const video = document.getElementById("cam")
 	const toggleBtn = document.getElementById("camToggleBtn")
-	const camText = document.querySelector(".cam-text");
+	const camText = document.querySelector(".cam-text")
 	const status = document.getElementById("camStatus")
 
 	if (!video || !toggleBtn || !status || !camText) return
@@ -318,19 +322,21 @@ function initCam() {
 
 	const stopStream = () => {
 		if (!stream) return
+
 		stream.getTracks().forEach((t) => t.stop())
 		stream = null
 		video.srcObject = null
+
 		camText.textContent = "카메라 켜기"
 		setStatus("카메라 꺼짐")
-		document.documentElement.dataset.camera = "";
+		document.documentElement.dataset.camera = ""
+
+		if (typeof window.stopEffects === "function") window.stopEffects()
+		if (typeof window.stopSpanEffects === "function") window.stopSpanEffects()
 	}
 
 	const startStream = async () => {
-		if (!navigator.mediaDevices?.getUserMedia) {
-			setStatus("이 브라우저는 카메라를 지원하지 않음")
-			return
-		}
+		if (!navigator.mediaDevices?.getUserMedia) return setStatus("이 브라우저는 카메라를 지원하지 않음")
 
 		try {
 			stream = await navigator.mediaDevices.getUserMedia({
@@ -343,11 +349,10 @@ function initCam() {
 
 			camText.textContent = "카메라 끄기"
 			setStatus("카메라 켜짐")
-			document.documentElement.dataset.camera = "on";
+			document.documentElement.dataset.camera = "on"
 		} catch {
 			stopStream()
 			setStatus("권한이 필요함")
-			document.documentElement.dataset.camera = "";
 		}
 	}
 
@@ -358,6 +363,7 @@ function initCam() {
 	})
 
 	window.addEventListener("pagehide", stopStream)
+
 	setStatus("카메라 꺼짐")
 
 	window.stopStream = stopStream
@@ -371,9 +377,7 @@ function initLockdown() {
 	document.addEventListener("contextmenu", block, { passive: false })
 	document.addEventListener("selectstart", block, { passive: false })
 	document.addEventListener("dragstart", block, { passive: false })
-
 	document.addEventListener("touchmove", block, { passive: false })
-
 	document.addEventListener("gesturestart", block, { passive: false })
 	document.addEventListener("gesturechange", block, { passive: false })
 	document.addEventListener("gestureend", block, { passive: false })
@@ -408,9 +412,9 @@ function initIdleUX() {
 	const root = document.documentElement
 	const countdownEl = document.querySelector(".idle-countdown")
 
-	const idleDimTime = 120000       // 2분
-	const countdownTime = 10000      // 10초
-	const fullResetTime = 180000     // 3분
+	const idleDimTime = 120000
+	const countdownTime = 10000
+	const fullResetTime = 180000
 
 	let idleTimer = null
 	let countdownTimer = null
@@ -431,12 +435,8 @@ function initIdleUX() {
 
 	const softReset = () => {
 		clearIdleState()
-
-		if (typeof showStart === "function")
-			showStart()
-
-		if (typeof stopStream === "function")
-			stopStream()
+		if (typeof showStart === "function") showStart()
+		if (typeof stopStream === "function") stopStream()
 	}
 
 	const startCountdown = () => {
@@ -487,6 +487,8 @@ function initEffectsCanvas() {
 	if (!bar || !host || !canvas) return
 
 	const root = document.documentElement
+	const isCamOn = () => root.dataset.camera === "on"
+
 	const ctx = canvas.getContext("2d")
 	if (!ctx) return
 
@@ -535,6 +537,7 @@ function initEffectsCanvas() {
 	}
 
 	const spawn = () => {
+		if (!isCamOn()) return stop()
 		if (!active.emojis.length) return
 
 		const rect = host.getBoundingClientRect()
@@ -542,7 +545,7 @@ function initEffectsCanvas() {
 		const h = rect.height
 
 		const emoji = pickRandom(active.emojis)
-		const size = 10 + Math.random() * 22
+		const size = 7 + Math.random() * 22
 		const x = Math.random() * w
 		const y = -30
 		const drift = (Math.random() * 60) - 30
@@ -562,13 +565,15 @@ function initEffectsCanvas() {
 			rot
 		})
 
-		if (particles.length > 40)
-			particles.splice(0, particles.length - 80)
+		if (particles.length > 30)
+			particles.splice(0, particles.length - 30)
 	}
 
 	let lastTs = 0
 
 	const tick = (ts) => {
+		if (!isCamOn()) return stop()
+
 		if (!lastTs) lastTs = ts
 		const dt = Math.min(0.05, (ts - lastTs) / 1000)
 		lastTs = ts
@@ -611,6 +616,8 @@ function initEffectsCanvas() {
 	}
 
 	const start = (key) => {
+		if (!isCamOn()) return stop()
+
 		const eff = effects[key]
 		if (!eff) return
 
@@ -621,9 +628,10 @@ function initEffectsCanvas() {
 		root.setAttribute("data-effect", eff.name)
 
 		timer = setInterval(() => {
+			if (!isCamOn()) return stop()
 			for (let i = 0; i < 1; i += 1)
 				spawn()
-		}, 600)
+		}, 700)
 
 		raf = requestAnimationFrame(tick)
 	}
@@ -634,6 +642,7 @@ function initEffectsCanvas() {
 
 		const key = btn.dataset.effect
 		if (key === "off") return stop()
+		if (!isCamOn()) return stop()
 
 		start(key)
 	})
@@ -827,9 +836,6 @@ function initShotGallery() {
 	})
 }
 
-
-
-
 initFortune()
 initCam()
 initLockdown()
@@ -838,4 +844,3 @@ setToday()
 initEffects()
 initEffectsCanvas()
 initShotGallery()
-
