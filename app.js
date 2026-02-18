@@ -777,12 +777,18 @@ function initShotGallery() {
 		const ctx = capture.getContext("2d")
 		if (!ctx) return null
 
+		await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+		await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+
+		ctx.save()
+		ctx.translate(w, 0)
+		ctx.scale(-1, 1)
+
 		ctx.drawImage(video, 0, 0, w, h)
 
 		if (fxCanvas) {
 			const rect = wrap.getBoundingClientRect()
-			const sx = 0
-			const sy = 0
+
 			const sw = fxCanvas.width
 			const sh = fxCanvas.height
 
@@ -792,8 +798,10 @@ function initShotGallery() {
 			const dw = rect.width * scaleX
 			const dh = rect.height * scaleY
 
-			ctx.drawImage(fxCanvas, sx, sy, sw, sh, 0, 0, dw, dh)
+			ctx.drawImage(fxCanvas, 0, 0, sw, sh, 0, 0, dw, dh)
 		}
+
+		ctx.restore()
 
 		const blob = await new Promise((resolve) => {
 			capture.toBlob((b) => resolve(b), "image/jpeg", 0.9)
@@ -801,6 +809,7 @@ function initShotGallery() {
 
 		return blob || null
 	}
+
 
 	btn.addEventListener("click", async () => {
 		btn.disabled = true
