@@ -732,7 +732,7 @@ function initShotGallery() {
 		item.appendChild(img)
 		item.appendChild(ttl)
 
-		const style = makeShotStyle(wrap, 86)
+		const style = makeShotStyle(86)
 		applyShotStyle(item, style)
 
 		item.addEventListener("click", () => {
@@ -841,15 +841,17 @@ function initShotGallery() {
 
 	const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 
-	const makeShotStyle = (wrap, size) => {
-		const rect = wrap.getBoundingClientRect()
-		const pad = 10
+	const makeShotStyle = (size) => {
+		const pad = 16
 
-		const maxX = Math.max(pad, rect.width - size - pad)
-		const maxY = Math.max(pad, rect.height - size - pad)
+		const w = window.innerWidth
+		const h = window.innerHeight
 
-		const x = clamp(Math.random() * rect.width, pad, maxX)
-		const y = clamp(Math.random() * rect.height, pad, maxY)
+		const maxX = Math.max(pad, w - size - pad)
+		const maxY = Math.max(pad, h - size - pad)
+
+		const x = clamp(Math.random() * w, pad, maxX)
+		const y = clamp(Math.random() * h, pad, maxY)
 
 		const rot = (Math.random() * 18) - 9
 		const z = Math.floor(10 + Math.random() * 90)
