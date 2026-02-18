@@ -764,44 +764,46 @@ function initShotGallery() {
 	const captureComposite = async () => {
 		if (video.readyState < 2) return null
 
-		const w = video.videoWidth
-		const h = video.videoHeight
-		if (!w || !h) return null
+		const rect = wrap.getBoundingClientRect()
+		const dpr = window.devicePixelRatio || 1
+
+		const outW = Math.max(1, Math.floor(rect.width * dpr))
+		const outH = Math.max(1, Math.floor(rect.height * dpr))
 
 		const fxCanvas = window.getFxCanvas ? window.getFxCanvas() : null
 
 		const capture = document.createElement("canvas")
-		capture.width = w
-		capture.height = h
+		capture.width = outW
+		capture.height = outH
 
 		const ctx = capture.getContext("2d")
 		if (!ctx) return null
 
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
 		await new Promise((resolve) => requestAnimationFrame(() => resolve()))
-		await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+
+		const vw = video.videoWidth
+		const vh = video.videoHeight
+		if (!vw || !vh) return null
+
+		const scale = Math.max(rect.width / vw, rect.height / vh)
+		const dw = vw * scale
+		const dh = vh * scale
+		const dx = (rect.width - dw) / 2
+		const dy = (rect.height - dh) / 2
 
 		ctx.save()
-		ctx.translate(w, 0)
+		ctx.translate(rect.width, 0)
 		ctx.scale(-1, 1)
 
-		ctx.drawImage(video, 0, 0, w, h)
-
-		if (fxCanvas) {
-			const rect = wrap.getBoundingClientRect()
-
-			const sw = fxCanvas.width
-			const sh = fxCanvas.height
-
-			const scaleX = w / rect.width
-			const scaleY = h / rect.height
-
-			const dw = rect.width * scaleX
-			const dh = rect.height * scaleY
-
-			ctx.drawImage(fxCanvas, 0, 0, sw, sh, 0, 0, dw, dh)
-		}
+		ctx.drawImage(video, rect.width - dx - dw, dy, dw, dh)
 
 		ctx.restore()
+
+		if (fxCanvas) {
+			ctx.drawImage(fxCanvas, 0, 0, fxCanvas.width, fxCanvas.height, 0, 0, rect.width, rect.height)
+		}
 
 		const blob = await new Promise((resolve) => {
 			capture.toBlob((b) => resolve(b), "image/jpeg", 0.9)
@@ -809,6 +811,7 @@ function initShotGallery() {
 
 		return blob || null
 	}
+
 
 
 	btn.addEventListener("click", async () => {
