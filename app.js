@@ -562,7 +562,7 @@ function initEffectsCanvas() {
 			rot
 		})
 
-		if (particles.length > 80)
+		if (particles.length > 40)
 			particles.splice(0, particles.length - 80)
 	}
 
@@ -621,9 +621,9 @@ function initEffectsCanvas() {
 		root.setAttribute("data-effect", eff.name)
 
 		timer = setInterval(() => {
-			for (let i = 0; i < 2; i += 1)
+			for (let i = 0; i < 1; i += 1)
 				spawn()
-		}, 250)
+		}, 600)
 
 		raf = requestAnimationFrame(tick)
 	}

@@ -674,7 +674,7 @@ html[data-camera="on"] .film-btn {
 .preview-panel::before {
     content: "Crack\ARoasters.";
     display: block;
-    opaicty: 0.8;
+    opacity: 0.8;
     position: absolute;
     z-index: 100;
     top: 10px;
