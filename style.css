@@ -614,20 +614,27 @@ html[data-camera="on"] .effect-bar {
 }
 
 .gallery {
-	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
-    position: fixed;
-	margin-top: 12px;
+	position: absolute;
+	inset: 0;
+	z-index: 30;
+	pointer-events: none;
 }
 
 .gallery-item {
-	position: relative;
+	position: absolute;
 	width: 86px;
 	height: 86px;
 	border-radius: 14px;
 	overflow: hidden;
 	background: rgba(0,0,0,0.08);
+	box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+	transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg));
+	will-change: transform;
+	pointer-events: auto;
+}
+
+.gallery-item:hover {
+	transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg)) scale(1.03);
 }
 
 .gallery-item img {
@@ -635,7 +642,7 @@ html[data-camera="on"] .effect-bar {
 	height: 100%;
 	object-fit: cover;
 	display: block;
-    transform: scaleX(-1);
+	transform: scaleX(-1);
 }
 
 .gallery-item .ttl {

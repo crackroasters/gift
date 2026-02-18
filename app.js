@@ -732,6 +732,9 @@ function initShotGallery() {
 		item.appendChild(img)
 		item.appendChild(ttl)
 
+		const style = makeShotStyle(wrap, 86)
+		applyShotStyle(item, style)
+
 		item.addEventListener("click", () => {
 			openPreview(id)
 		})
@@ -754,6 +757,7 @@ function initShotGallery() {
 		updateTtl()
 		return item
 	}
+
 
 	const captureComposite = async () => {
 		if (video.readyState < 2) return null
@@ -834,6 +838,32 @@ function initShotGallery() {
 		if (!activeId) return
 		removeShot(activeId)
 	})
+
+	const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+	const makeShotStyle = (wrap, size) => {
+		const rect = wrap.getBoundingClientRect()
+		const pad = 10
+
+		const maxX = Math.max(pad, rect.width - size - pad)
+		const maxY = Math.max(pad, rect.height - size - pad)
+
+		const x = clamp(Math.random() * rect.width, pad, maxX)
+		const y = clamp(Math.random() * rect.height, pad, maxY)
+
+		const rot = (Math.random() * 18) - 9
+		const z = Math.floor(10 + Math.random() * 90)
+
+		return { x, y, rot, z }
+	}
+
+	const applyShotStyle = (item, style) => {
+		item.style.left = `${style.x}px`
+		item.style.top = `${style.y}px`
+		item.style.zIndex = String(style.z)
+		item.style.setProperty("--rot", `${style.rot}deg`)
+	}
+
 }
 
 initFortune()
