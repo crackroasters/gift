@@ -861,7 +861,7 @@ function initShotGallery() {
 		let y = 0
 		let placed = false
 
-		for (let i = 0; i < triesMax; i =+ 1) {
+		for (let i = 0; i < triesMax; i += 1) {
 			x = clamp(Math.random() * w, pad, maxX)
 			y = clamp(Math.random() * h, pad, maxY)
 
