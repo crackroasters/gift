@@ -661,6 +661,7 @@ html[data-camera="on"] .effect-bar {
 .film-btn {
     display: none;
     position: absolute;
+    z-index: 100000;
     bottom: 20px;
     right: 20px;
 }
