@@ -15,112 +15,6 @@ function playAnim(btn, result) {
 	})
 }
 
-function removeEffects(host) {
-	if (!host) return
-
-	host.querySelectorAll(".fx").forEach((e) => {
-		e.remove()
-	})
-
-	document.documentElement.removeAttribute("data-effect")
-}
-
-function spawnFloatEmoji(host, emoji) {
-	if (!host) return
-
-	const el = document.createElement("span")
-	el.className = "fx"
-	el.textContent = emoji
-
-	const rect = host.getBoundingClientRect()
-
-	const x = Math.random() * 100
-	const size = 16 + Math.random() * 14
-	const duration = 2 + Math.random() * 4
-	const drift = (Math.random() * 40) + 30
-	const delay = Math.random() * 0.4
-
-	const fallPx = rect.height + 120
-
-	el.style.left = `${x}%`
-	el.style.fontSize = `${size}px`
-	el.style.animationDelay = `${delay}s`
-	el.style.setProperty("--fx-duration", `${duration}s`)
-	el.style.setProperty("--fx-drift", `${drift}%`)
-	el.style.setProperty("--fx-fall", `${fallPx}px`)
-
-	host.appendChild(el)
-
-	el.addEventListener("animationend", () => {
-		el.remove()
-	})
-}
-
-function initEffects() {
-	const bar = document.querySelector(".effect-bar")
-	const host = document.getElementById("camWrap") || document.querySelector(".cam-wrap") || document.querySelector(".camera")
-
-	if (!bar || !host) return
-
-	const root = document.documentElement
-	const isCamOn = () => root.dataset.camera === "on"
-
-	const effects = {
-		"1": { name: "water", emojis: ["💧", "💦", "🌧️"] },
-		"2": { name: "balloon", emojis: ["🎈", "🎉", "🎊"] },
-		"3": { name: "sparkle", emojis: ["✨", "⭐️", "💫"] },
-		"4": { name: "bubble", emojis: ["🫧", "🤍", "🩵"] },
-		"5": { name: "heart", emojis: ["🩷", "🌸", "🎀"] }
-	}
-
-	let timer = null
-	let activeEmojis = []
-
-	const stop = () => {
-		if (timer) clearInterval(timer)
-		timer = null
-		activeEmojis = []
-		removeEffects(host)
-	}
-
-	const start = (key) => {
-		if (!isCamOn()) return stop()
-
-		const effect = effects[key]
-		if (!effect) return
-
-		stop()
-
-		root.setAttribute("data-effect", effect.name)
-		activeEmojis = effect.emojis
-
-		timer = setInterval(() => {
-			if (!isCamOn()) return stop()
-			if (!activeEmojis.length) return
-			spawnFloatEmoji(host, pickRandom(activeEmojis))
-		}, 1050)
-	}
-
-	bar.addEventListener("click", (e) => {
-		const btn = e.target.closest(".effect-btn")
-		if (!btn) return
-
-		const key = btn.dataset.effect
-		if (key === "off") return stop()
-		if (!isCamOn()) return stop()
-
-		start(key)
-	})
-
-	window.addEventListener("pagehide", stop)
-
-	document.addEventListener("visibilitychange", () => {
-		if (document.hidden) stop()
-	})
-
-	window.stopSpanEffects = stop
-}
-
 function launchCelebration(type = "heart") {
 	const count = 24
 
@@ -317,7 +211,6 @@ function initCam() {
 	if (!video || !toggleBtn || !status || !camText) return
 
 	let stream = null
-
 	const setStatus = (msg) => status.textContent = msg
 
 	const stopStream = () => {
@@ -332,7 +225,6 @@ function initCam() {
 		document.documentElement.dataset.camera = ""
 
 		if (typeof window.stopEffects === "function") window.stopEffects()
-		if (typeof window.stopSpanEffects === "function") window.stopSpanEffects()
 	}
 
 	const startStream = async () => {
@@ -365,7 +257,6 @@ function initCam() {
 	window.addEventListener("pagehide", stopStream)
 
 	setStatus("카메라 꺼짐")
-
 	window.stopStream = stopStream
 }
 
@@ -472,7 +363,7 @@ function initIdleUX() {
 		startTimers()
 	}
 
-	["click", "touchstart", "mousemove", "keydown"].forEach((e) => {
+	;["click", "touchstart", "mousemove", "keydown"].forEach((e) => {
 		document.addEventListener(e, userActivity, { passive: true })
 	})
 
@@ -504,6 +395,7 @@ function initEffectsCanvas() {
 	let timer = null
 	let raf = 0
 	let particles = []
+	let lastTs = 0
 
 	const fitCanvas = () => {
 		const rect = host.getBoundingClientRect()
@@ -531,6 +423,7 @@ function initEffectsCanvas() {
 
 		particles = []
 		active = { name: "", emojis: [] }
+		lastTs = 0
 
 		root.removeAttribute("data-effect")
 		clearCanvas()
@@ -568,8 +461,6 @@ function initEffectsCanvas() {
 		if (particles.length > 30)
 			particles.splice(0, particles.length - 30)
 	}
-
-	let lastTs = 0
 
 	const tick = (ts) => {
 		if (!isCamOn()) return stop()
@@ -629,8 +520,7 @@ function initEffectsCanvas() {
 
 		timer = setInterval(() => {
 			if (!isCamOn()) return stop()
-			for (let i = 0; i < 1; i += 1)
-				spawn()
+			spawn()
 		}, 700)
 
 		raf = requestAnimationFrame(tick)
@@ -678,9 +568,107 @@ function initShotGallery() {
 
 	const ttlMs = 300000
 	const maxItems = 12
+	const size = 86
+	const pad = 18
 	const shots = []
 
 	let activeId = ""
+
+	const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+	const rectIntersects = (a, b) =>
+		a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+
+	const getViewportRect = () => {
+		const w = window.innerWidth
+		const h = window.innerHeight
+
+		return {
+			left: pad,
+			top: pad,
+			right: w - pad,
+			bottom: h - pad,
+			width: w,
+			height: h
+		}
+	}
+
+	const pickPosAvoid = (boxSize, avoidEl) => {
+		const v = getViewportRect()
+		const maxX = Math.max(pad, v.width - boxSize - pad)
+		const maxY = Math.max(pad, v.height - boxSize - pad)
+
+		const avoidRect = avoidEl ? avoidEl.getBoundingClientRect() : null
+		const triesMax = 90
+
+		let x = 0
+		let y = 0
+		let placed = false
+
+		for (let i = 0; i < triesMax; i += 1) {
+			x = clamp(Math.random() * v.width, pad, maxX)
+			y = clamp(Math.random() * v.height, pad, maxY)
+
+			if (!avoidRect) { placed = true; break }
+
+			const shotRect = {
+				left: x,
+				top: y,
+				right: x + boxSize,
+				bottom: y + boxSize
+			}
+
+			if (!rectIntersects(shotRect, avoidRect)) { placed = true; break }
+		}
+
+		if (!placed && avoidRect) {
+			const leftSpace = avoidRect.left - pad
+			const rightSpace = v.width - avoidRect.right - pad
+			const topSpace = avoidRect.top - pad
+			const bottomSpace = v.height - avoidRect.bottom - pad
+
+			const canLeft = leftSpace >= boxSize
+			const canRight = rightSpace >= boxSize
+			const canTop = topSpace >= boxSize
+			const canBottom = bottomSpace >= boxSize
+
+			if (canLeft) x = clamp(Math.random() * leftSpace, pad, avoidRect.left - boxSize - pad)
+			if (!canLeft && canRight) x = clamp(avoidRect.right + Math.random() * rightSpace, avoidRect.right + pad, maxX)
+			if (!canLeft && !canRight) x = clamp(x, pad, maxX)
+
+			if (canTop) y = clamp(Math.random() * topSpace, pad, avoidRect.top - boxSize - pad)
+			if (!canTop && canBottom) y = clamp(avoidRect.bottom + Math.random() * bottomSpace, avoidRect.bottom + pad, maxY)
+			if (!canTop && !canBottom) y = clamp(y, pad, maxY)
+		}
+
+		const rot = (Math.random() * 18) - 9
+		const z = Math.floor(10 + Math.random() * 90)
+
+		return { x, y, rot, z }
+	}
+
+	const applyShotStyle = (item, style) => {
+		item.style.left = `${style.x}px`
+		item.style.top = `${style.y}px`
+		item.style.zIndex = String(style.z)
+		item.style.setProperty("--rot", `${style.rot}deg`)
+	}
+
+	const clampAllShots = () => {
+		const v = getViewportRect()
+		const maxX = Math.max(pad, v.width - size - pad)
+		const maxY = Math.max(pad, v.height - size - pad)
+
+		document.querySelectorAll("#gallery .gallery-item").forEach((e) => {
+			const left = parseFloat(e.style.left || "0")
+			const top = parseFloat(e.style.top || "0")
+
+			e.style.left = `${clamp(left, pad, maxX)}px`
+			e.style.top = `${clamp(top, pad, maxY)}px`
+		})
+	}
+
+	window.addEventListener("resize", clampAllShots)
 
 	const openPreview = (id) => {
 		const shot = shots.find((e) => e.id === id)
@@ -733,9 +721,8 @@ function initShotGallery() {
 		item.appendChild(ttl)
 
 		const avoidEl = document.querySelector(".camera")
-		const style = makeShotStyle(86, avoidEl)
+		const style = pickPosAvoid(size, avoidEl)
 		applyShotStyle(item, style)
-
 
 		item.addEventListener("click", () => {
 			openPreview(id)
@@ -760,6 +747,10 @@ function initShotGallery() {
 		return item
 	}
 
+	const waitFrames = async (n) => {
+		for (let i = 0; i < n; i += 1)
+			await new Promise((r) => requestAnimationFrame(r))
+	}
 
 	const captureComposite = async () => {
 		if (video.readyState < 2) return null
@@ -781,7 +772,7 @@ function initShotGallery() {
 
 		ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-		await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+		await waitFrames(2)
 
 		const vw = video.videoWidth
 		const vh = video.videoHeight
@@ -796,14 +787,11 @@ function initShotGallery() {
 		ctx.save()
 		ctx.translate(rect.width, 0)
 		ctx.scale(-1, 1)
-
 		ctx.drawImage(video, rect.width - dx - dw, dy, dw, dh)
-
 		ctx.restore()
 
-		if (fxCanvas) {
+		if (fxCanvas)
 			ctx.drawImage(fxCanvas, 0, 0, fxCanvas.width, fxCanvas.height, 0, 0, rect.width, rect.height)
-		}
 
 		const blob = await new Promise((resolve) => {
 			capture.toBlob((b) => resolve(b), "image/jpeg", 0.9)
@@ -811,8 +799,6 @@ function initShotGallery() {
 
 		return blob || null
 	}
-
-
 
 	btn.addEventListener("click", async () => {
 		btn.disabled = true
@@ -852,96 +838,6 @@ function initShotGallery() {
 		if (!activeId) return
 		removeShot(activeId)
 	})
-
-	const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
-
-	const rectIntersects = (a, b) =>
-		a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
-
-	const makeShotStyle = (size, avoidEl) => {
-		const pad = 18
-		const w = window.innerWidth
-		const h = window.innerHeight
-
-		const maxX = Math.max(pad, w - size - pad)
-		const maxY = Math.max(pad, h - size - pad)
-
-		const avoidRect = avoidEl ? avoidEl.getBoundingClientRect() : null
-		const triesMax = 80
-
-		let x = 0
-		let y = 0
-		let placed = false
-
-		for (let i = 0; i < triesMax; i += 1) {
-			x = clamp(Math.random() * w, pad, maxX)
-			y = clamp(Math.random() * h, pad, maxY)
-
-			if (!avoidRect) { placed = true; break }
-
-			const shotRect = {
-				left: x,
-				top: y,
-				right: x + size,
-				bottom: y + size
-			}
-
-			if (!rectIntersects(shotRect, avoidRect)) { placed = true; break }
-		}
-
-		if (!placed && avoidRect) {
-			const leftSpace = avoidRect.left - pad
-			const rightSpace = w - avoidRect.right - pad
-			const topSpace = avoidRect.top - pad
-			const bottomSpace = h - avoidRect.bottom - pad
-
-			const canLeft = leftSpace >= size
-			const canRight = rightSpace >= size
-			const canTop = topSpace >= size
-			const canBottom = bottomSpace >= size
-
-			if (canLeft) x = clamp(Math.random() * leftSpace, pad, avoidRect.left - size - pad)
-			if (!canLeft && canRight) x = clamp(avoidRect.right + Math.random() * rightSpace, avoidRect.right + pad, maxX)
-			if (!canLeft && !canRight) x = clamp(x, pad, maxX)
-
-			if (canTop) y = clamp(Math.random() * topSpace, pad, avoidRect.top - size - pad)
-			if (!canTop && canBottom) y = clamp(avoidRect.bottom + Math.random() * bottomSpace, avoidRect.bottom + pad, maxY)
-			if (!canTop && !canBottom) y = clamp(y, pad, maxY)
-		}
-
-		const rot = (Math.random() * 18) - 9
-		const z = Math.floor(10 + Math.random() * 90)
-
-		return { x, y, rot, z }
-	}
-
-	const applyShotStyle = (item, style) => {
-		item.style.left = `${style.x}px`
-		item.style.top = `${style.y}px`
-		item.style.zIndex = String(style.z)
-		item.style.setProperty("--rot", `${style.rot}deg`)
-	}
-	const clampAllShots = () => {
-	const size = 86
-	const pad = 18
-	const w = window.innerWidth
-	const h = window.innerHeight
-
-	const maxX = Math.max(pad, w - size - pad)
-	const maxY = Math.max(pad, h - size - pad)
-
-	document.querySelectorAll("#gallery .gallery-item").forEach((e) => {
-		const left = parseFloat(e.style.left || "0")
-		const top = parseFloat(e.style.top || "0")
-
-		e.style.left = `${clamp(left, pad, maxX)}px`
-		e.style.top = `${clamp(top, pad, maxY)}px`
-	})
-}
-
-window.addEventListener("resize", clampAllShots)
-
-
 }
 
 initFortune()
@@ -949,6 +845,6 @@ initCam()
 initLockdown()
 initAutoScroll()
 setToday()
-initEffects()
+initIdleUX()
 initEffectsCanvas()
 initShotGallery()
