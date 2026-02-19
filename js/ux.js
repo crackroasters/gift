@@ -83,7 +83,7 @@ export const initIdleUX = ({ onSoftReset }) => {
 	const startTimers = () => {
 		clearTimers()
 
-		idleTimer = setTimeout(() => root.dataset.idle = "dim", idleDimTime)
+		// idleTimer = setTimeout(() => root.dataset.idle = "dim", idleDimTime)
 		countdownTimer = setTimeout(() => startCountdown(), fullResetTime - countdownTime)
 		finalTimer = setTimeout(() => softReset(), fullResetTime)
 	}
