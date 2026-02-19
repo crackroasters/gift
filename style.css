@@ -664,6 +664,11 @@ html[data-camera="on"] .effect-bar {
     z-index: 100000;
     bottom: 20px;
     right: 20px;
+    border: 0;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background-color: #ff8888;
+    font-size: 18px;
 }
 
 html[data-camera="on"] .film-btn {
@@ -745,4 +750,12 @@ body.lockdown :is(
 	.browser, .browser *
 ) {
 	pointer-events: auto;
+}
+
+.alert {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
 }
