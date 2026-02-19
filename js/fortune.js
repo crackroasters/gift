@@ -174,8 +174,14 @@ export const initFortune = () => {
 		result.textContent = fortune.text
 
 		applyRootFortune(fortune.isGood)
-		if (fortune.isGood) launchCelebration("heart")
-		if (fortune.isGood) launchCelebration("flower")
+
+		if (fortune.isGood) {
+			launchCelebration("heart")
+			launchCelebration("flower")
+		}
+
+		if (!fortune.isGood)
+			launchCelebration("clover")
 
 		playAnim(btn, result)
 

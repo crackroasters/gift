@@ -491,6 +491,10 @@ body.lockdown {
 	content: "🌸";
 }
 
+.celebration--clover::before{
+	content:"🍀";
+}
+
 @keyframes fall {
 	0% {
 		transform: translateY(0) rotate(0deg);
