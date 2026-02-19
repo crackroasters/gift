@@ -56,5 +56,3 @@ initIdleUX({
 		effects.stop()
 	}
 })
-
-initFocusZ()
