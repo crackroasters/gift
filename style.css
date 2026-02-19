@@ -736,3 +736,12 @@ html[data-camera="on"] .film-btn {
 	background: rgba(255,255,255,0.12);
 	color: #fff;
 }
+
+body.lockdown :is(
+	#camToggleBtn, #fortuneBtn, #fortuneRetryBtn,
+	.effect-btn, .film-btn, .gallery-item,
+	#previewCloseBtn, #previewDeleteBtn,
+	.browser, .browser *
+) {
+	pointer-events: auto;
+}

@@ -33,15 +33,16 @@ const initBrowserZ = () => {
 	}
 
 	document.addEventListener("pointerdown", (e) => {
-		const target = e.target
-		if (!(target instanceof Element)) return
+		const el = document.elementFromPoint(e.clientX, e.clientY)
+		if (!(el instanceof Element)) return
 
-		const card = target.closest(".browser")
+		const card = el.closest(".browser")
 		if (!card) return
 
 		bringFront(card)
-	}, { passive: true })
+	}, { capture: true, passive: true })
 }
+
 
 initBrowserZ()
 initLockdown()
