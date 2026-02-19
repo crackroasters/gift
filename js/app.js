@@ -15,42 +15,35 @@ gallery.init()
 
 const fortune = initFortune()
 
-const initFocusZ = () => {
-	const targets = Array.from(document.querySelectorAll(".browser, .camera, .preview-panel"))
-	if (!targets.length) return
+const initBrowserZ = () => {
+	const browsers = [...document.querySelectorAll(".browser")]
+	if (!browsers.length) return
 
-	let zTop = targets.reduce((max, el) => {
-		const z = Number(window.getComputedStyle(el).zIndex)
-		if (!Number.isFinite(z)) return max
-		return Math.max(max, z)
-	}, 10)
-
-	const setTop = (el) => {
-		if (!el) return
-		zTop = zTop + 1
-		el.style.zIndex = String(zTop)
+	const getZ = (el) => {
+		const z = Number.parseInt(getComputedStyle(el).zIndex, 10)
+		return Number.isFinite(z) ? z : 0
 	}
 
-	const findTarget = (t) => {
-		const el = t.closest(".preview")
-		if (el) return null
-		return t.closest(".browser, .camera, .preview-panel")
+	let topZ = Math.max(10, ...browsers.map((e) => getZ(e)))
+
+	const bringFront = (el) => {
+		topZ += 1
+		el.style.zIndex = String(topZ)
+		el.dataset.z = String(topZ)
 	}
 
-	;["pointerdown", "touchstart", "mousedown"].forEach((evt) => {
-		document.addEventListener(evt, (e) => {
-			const t = e.target
-			if (!(t instanceof Element)) return
+	document.addEventListener("pointerdown", (e) => {
+		const target = e.target
+		if (!(target instanceof Element)) return
 
-			const hit = findTarget(t)
-			if (!hit) return
+		const card = target.closest(".browser")
+		if (!card) return
 
-			setTop(hit)
-		}, { passive: true })
-	})
+		bringFront(card)
+	}, { passive: true })
 }
 
-
+initBrowserZ()
 initLockdown()
 initAutoScroll()
 setToday()
