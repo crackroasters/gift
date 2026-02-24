@@ -97,5 +97,5 @@ export const initIdleUX = ({ onSoftReset }) => {
 		document.addEventListener(e, userActivity, { passive: true })
 	})
 
-	startTimers()
+	//startTimers()
 }
