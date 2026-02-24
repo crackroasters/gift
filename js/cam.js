@@ -58,6 +58,8 @@ export const createCam = ({ effects }) => {
 		on(document, "visibilitychange", () => document.hidden && stop())
 		on(window, "pagehide", stop)
 
+		start()
+
 		setStatus("카메라 꺼짐")
 	}
 
