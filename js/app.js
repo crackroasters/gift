@@ -52,7 +52,7 @@ setToday()
 initIdleUX({
 	onSoftReset: () => {
 		fortune?.showStart?.()
-		cam.stop()
+		//cam.stop()
 		effects.stop()
 	}
 })
