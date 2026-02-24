@@ -45,7 +45,6 @@ export const createCam = ({ effects }) => {
 			setStatus("권한이 필요함")
 		}
 	}
-
 	const init = () => {
 		video = $("#cam")
 		toggleBtn = $("#camToggleBtn")
@@ -55,14 +54,17 @@ export const createCam = ({ effects }) => {
 		if (!video || !toggleBtn || !status || !camText) return
 
 		on(toggleBtn, "click", () => isOn() ? stop() : start())
-		on(document, "visibilitychange", () => document.hidden && stop())
+
+		on(document, "visibilitychange", () => {
+			if (document.hidden) return stop()
+			start()
+		})
+
 		on(window, "pagehide", stop)
 
+		setStatus("카메라 켜는 중...")
 		start()
-
-		setStatus("카메라 꺼짐")
 	}
-
 	return {
 		init,
 		stop,
