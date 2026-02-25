@@ -11,7 +11,7 @@ export const createGallery = ({ effects, cam }) => {
 	let previewDeleteBtn = null
 	let previewCloseBtn = null
 
-	const ttlMs = 300000
+	const ttlMs = 8 * 60 * 60 * 1000
 	const maxItems = 12
 	const shots = []
 	let activeId = ""
@@ -163,9 +163,10 @@ export const createGallery = ({ effects, cam }) => {
 			if (left <= 0) return
 
 			const sec = Math.ceil(left / 1000)
-			const mm = String(Math.floor(sec / 60)).padStart(1, "0")
+			const hh = String(Math.floor(sec / 3600)).padStart(2, "0")
+			const mm = String(Math.floor((sec % 3600) / 60)).padStart(2, "0")
 			const ss = String(sec % 60).padStart(2, "0")
-			ttl.textContent = `${mm}:${ss}`
+			ttl.textContent = `${hh}:${mm}:${ss}`
 		}
 
 		const interval = setInterval(() => {
