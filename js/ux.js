@@ -93,9 +93,9 @@ export const initIdleUX = ({ onSoftReset }) => {
 		startTimers()
 	}
 
-	;["click", "touchstart", "mousemove", "keydown"].forEach((e) => {
-		document.addEventListener(e, userActivity, { passive: true })
-	})
+	// ;["click", "touchstart", "mousemove", "keydown"].forEach((e) => {
+	// 	document.addEventListener(e, userActivity, { passive: true })
+	// })
 
 	//startTimers()
 }
