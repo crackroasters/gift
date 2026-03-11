@@ -11,6 +11,9 @@ export const createGallery = ({ effects, cam }) => {
 	let previewDeleteBtn = null
 	let previewCloseBtn = null
 
+	const dbName = "crack-photo-booth"
+	const storeName = "shots"
+
 	const ttlMs = 8 * 60 * 60 * 1000
 	const maxItems = 12
 	const shots = []
@@ -18,6 +21,70 @@ export const createGallery = ({ effects, cam }) => {
 
 	const sizePx = 86
 	const padPx = 18
+
+	let db = null
+
+	const openDb = () => new Promise((resolve, reject) => {
+		const req = indexedDB.open(dbName, 1)
+
+		req.onupgradeneeded = () => {
+			const nextDb = req.result
+
+			if (!nextDb.objectStoreNames.contains(storeName)) {
+				const store = nextDb.createObjectStore(storeName, { keyPath: "id" })
+				store.createIndex("expireAt", "expireAt", { unique: false })
+				store.createIndex("createdAt", "createdAt", { unique: false })
+			}
+		}
+
+		req.onsuccess = () => resolve(req.result)
+		req.onerror = () => reject(req.error)
+	})
+
+	const getDb = async () => {
+		if (db) return db
+		db = await openDb()
+		return db
+	}
+
+	const runTx = async (mode, work) => {
+		const currentDb = await getDb()
+
+		return new Promise((resolve, reject) => {
+			const tx = currentDb.transaction(storeName, mode)
+			const store = tx.objectStore(storeName)
+			const result = work(store)
+
+			tx.oncomplete = () => resolve(result)
+			tx.onerror = () => reject(tx.error)
+			tx.onabort = () => reject(tx.error)
+		})
+	}
+
+	const putShotDb = async (record) => {
+		await runTx("readwrite", (store) => {
+			store.put(record)
+		})
+	}
+
+	const deleteShotDb = async (id) => {
+		await runTx("readwrite", (store) => {
+			store.delete(id)
+		})
+	}
+
+	const getAllShotsDb = async () => {
+		const currentDb = await getDb()
+
+		return new Promise((resolve, reject) => {
+			const tx = currentDb.transaction(storeName, "readonly")
+			const store = tx.objectStore(storeName)
+			const req = store.getAll()
+
+			req.onsuccess = () => resolve(req.result || [])
+			req.onerror = () => reject(req.error)
+		})
+	}
 
 	const getAvoidRects = () => {
 		const list = []
@@ -55,23 +122,52 @@ export const createGallery = ({ effects, cam }) => {
 		preview.setAttribute("aria-hidden", "true")
 	}
 
-	const removeShot = (id) => {
+	const clearShotTimer = (shot) => {
+		if (!shot?.timer) return
+		clearTimeout(shot.timer)
+		shot.timer = null
+	}
+
+	const revokeShotUrl = (shot) => {
+		if (!shot?.url) return
+		URL.revokeObjectURL(shot.url)
+		shot.url = ""
+	}
+
+	const removeShot = async (id, byDb = true) => {
 		const idx = shots.findIndex((e) => e.id === id)
-		if (idx < 0) return
+		if (idx < 0) {
+			if (byDb) await deleteShotDb(id)
+			return
+		}
 
 		const shot = shots[idx]
-		clearTimeout(shot.timer)
-		shot.url && URL.revokeObjectURL(shot.url)
+
+		clearShotTimer(shot)
+		revokeShotUrl(shot)
 
 		shot.el && shot.el.remove()
 		shots.splice(idx, 1)
 
 		if (activeId === id) closePreview()
+		if (byDb) await deleteShotDb(id)
 	}
 
-	const trimOverflow = () => {
+	const sortShotsByCreated = (list) => [...list].sort((a, b) => a.createdAt - b.createdAt)
+
+	const trimOverflow = async () => {
 		while (shots.length > maxItems)
-			removeShot(shots[0].id)
+			await removeShot(shots[0].id)
+	}
+
+	const scheduleExpire = (shot) => {
+		clearShotTimer(shot)
+
+		const delay = Math.max(0, shot.expireAt - nowMs())
+
+		shot.timer = setTimeout(() => {
+			removeShot(shot.id)
+		}, delay)
 	}
 
 	const clampShotToViewport = (x, y) => {
@@ -100,10 +196,18 @@ export const createGallery = ({ effects, cam }) => {
 			x = clamped.x
 			y = clamped.y
 
-			const shotRect = { left: x, top: y, right: x + sizePx, bottom: y + sizePx }
-			const hit = avoidRects.some((r) => rectIntersects(shotRect, r))
+			const shotRect = {
+				left: x,
+				top: y,
+				right: x + sizePx,
+				bottom: y + sizePx
+			}
 
-			if (!hit) { placed = true; break }
+			const hit = avoidRects.some((r) => rectIntersects(shotRect, r))
+			if (!hit) {
+				placed = true
+				break
+			}
 		}
 
 		if (!placed) {
@@ -138,34 +242,40 @@ export const createGallery = ({ effects, cam }) => {
 		})
 	}
 
-	const makeItem = (url, expireAt, id) => {
+	const makeItem = (shot) => {
 		const item = document.createElement("div")
 		item.className = "gallery-item"
-		item.dataset.id = id
+		item.dataset.id = shot.id
 
 		const img = document.createElement("img")
-		img.src = url
+		img.src = shot.url
 		img.alt = "shot"
 
 		const ttl = document.createElement("div")
 		ttl.className = "ttl"
-		ttl.textContent = "5:00"
+		ttl.textContent = "00:00:00"
 
 		item.appendChild(img)
 		item.appendChild(ttl)
 
-		applyShotStyle(item, makeShotStyle())
+		const style = shot.style || makeShotStyle()
+		applyShotStyle(item, style)
 
-		on(item, "click", () => openPreview(id))
+		on(item, "click", () => openPreview(shot.id))
 
 		const updateTtl = () => {
-			const left = expireAt - nowMs()
-			if (left <= 0) return
+			const left = shot.expireAt - nowMs()
+
+			if (left <= 0) {
+				ttl.textContent = "00:00:00"
+				return
+			}
 
 			const sec = Math.ceil(left / 1000)
 			const hh = String(Math.floor(sec / 3600)).padStart(2, "0")
 			const mm = String(Math.floor((sec % 3600) / 60)).padStart(2, "0")
 			const ss = String(sec % 60).padStart(2, "0")
+
 			ttl.textContent = `${hh}:${mm}:${ss}`
 		}
 
@@ -176,6 +286,57 @@ export const createGallery = ({ effects, cam }) => {
 
 		updateTtl()
 		return item
+	}
+
+	const addShotRuntime = (record) => {
+		const url = URL.createObjectURL(record.blob)
+
+		const shot = {
+			id: record.id,
+			blob: record.blob,
+			url,
+			expireAt: record.expireAt,
+			createdAt: record.createdAt,
+			style: record.style,
+			el: null,
+			timer: null
+		}
+
+		shot.el = makeItem(shot)
+		gallery.prepend(shot.el)
+		scheduleExpire(shot)
+		shots.push(shot)
+
+		return shot
+	}
+
+	const restoreShots = async () => {
+		const records = await getAllShotsDb()
+		const now = nowMs()
+
+		const valid = []
+		const expired = []
+
+		records.forEach((e) => {
+			if (e.expireAt <= now) expired.push(e.id)
+			else valid.push(e)
+		})
+
+		expired.forEach((id) => {
+			deleteShotDb(id)
+		})
+
+		const sorted = sortShotsByCreated(valid)
+		const keep = sorted.slice(-maxItems)
+		const overflow = sorted.slice(0, Math.max(0, sorted.length - maxItems))
+
+		overflow.forEach((e) => {
+			deleteShotDb(e.id)
+		})
+
+		keep.forEach((record) => {
+			addShotRuntime(record)
+		})
 	}
 
 	const captureComposite = async () => {
@@ -211,7 +372,6 @@ export const createGallery = ({ effects, cam }) => {
 		ctx.save()
 		ctx.translate(rect.width, 0)
 		ctx.scale(-1, 1)
-
 		ctx.drawImage(video, rect.width - dx - dw, dy, dw, dh)
 		ctx.restore()
 
@@ -226,7 +386,28 @@ export const createGallery = ({ effects, cam }) => {
 		return blob || null
 	}
 
-	const init = () => {
+	const saveNewShot = async (blob) => {
+		const createdAt = nowMs()
+		const expireAt = createdAt + ttlMs
+		const id = uid()
+		const style = makeShotStyle()
+
+		const record = {
+			id,
+			blob,
+			expireAt,
+			createdAt,
+			style
+		}
+
+		await putShotDb(record)
+		const shot = addShotRuntime(record)
+		await trimOverflow()
+
+		return shot
+	}
+
+	const init = async () => {
 		video = $("#cam")
 		wrap = $("#camWrap")
 		btn = $(".film-btn")
@@ -240,25 +421,19 @@ export const createGallery = ({ effects, cam }) => {
 		if (!video || !wrap || !btn || !gallery) return
 		if (!preview || !previewImg || !previewDeleteBtn || !previewCloseBtn) return
 
+		await restoreShots()
+
 		on(btn, "click", async () => {
 			btn.disabled = true
 
-			const blob = await captureComposite()
-			if (!blob) { btn.disabled = false; return }
+			try {
+				const blob = await captureComposite()
+				if (!blob) return
 
-			const url = URL.createObjectURL(blob)
-			const id = uid()
-			const expireAt = nowMs() + ttlMs
-
-			const el = makeItem(url, expireAt, id)
-			gallery.prepend(el)
-
-			const timer = setTimeout(() => removeShot(id), ttlMs)
-
-			shots.push({ id, url, el, timer })
-			trimOverflow()
-
-			btn.disabled = false
+				await saveNewShot(blob)
+			} finally {
+				btn.disabled = false
+			}
 		})
 
 		on(preview, "click", (e) => {
@@ -270,7 +445,10 @@ export const createGallery = ({ effects, cam }) => {
 		})
 
 		on(previewCloseBtn, "click", () => closePreview())
-		on(previewDeleteBtn, "click", () => activeId && removeShot(activeId))
+		on(previewDeleteBtn, "click", async () => {
+			if (!activeId) return
+			await removeShot(activeId)
+		})
 
 		on(window, "resize", clampAllShots)
 	}
